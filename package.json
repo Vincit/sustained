@@ -1,0 +1,35 @@
+{
+  "name": "sustained",
+  "version": "0.1.0",
+  "description": "Experimental knex.js clone with emphasis on reflection and malleability",
+  "main": "index.js",
+  "scripts": {
+    "test": "npm run eslint && mocha --slow 10 --timeout 15000 --reporter spec --recursive tests",
+    "test-travis": "npm run eslint && istanbul --config=.istanbul.yml cover _mocha -- --slow 100 --timeout 60000 --reporter spec --recursive tests && npm run test-typings",
+    "test-fast": "mocha --slow 10 --timeout 15000 --reporter spec --recursive tests --bail",
+    "test-opt": "mocha --slow 10 --timeout 15000 --reporter spec --recursive tests --bail --trace_opt --trace_deopt",
+    "test-typings": "tsc",
+    "coveralls": "cat ./testCoverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js",
+    "prettier": "prettier --write 'examples/**/*.js' 'lib/**/*.js' 'tests/**/*.js'",
+    "eslint": "eslint --format codeframe 'examples/**/*.js' 'lib/**/*.js' 'tests/**/*.js'"
+  },
+  "files": [
+    "README.md",
+    "LICENSE",
+    "lib/*",
+    "index.js"
+  ],
+  "author": {
+    "name": "Sami Koskimäki",
+    "email": "sami.koskimaki@vincit.com",
+    "url": "https://github.com/koskimas"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "babel-eslint": "^8.0.2",
+    "chai": "^4.1.2",
+    "eslint-plugin-prettier": "^2.3.1",
+    "mocha": "^4.0.1",
+    "prettier": "^1.8.2"
+  }
+}
