@@ -64,6 +64,61 @@ describe('AST', () => {
       });
     });
 
+    it(`where(qb => qb.where('a', 1).orWhere('b', 2))`, () => {
+      const builder = query().where(qb => {
+        // No return on purpose.
+        qb.where('a', 1).orWhere('b', 2);
+      });
+
+      expect(builder.ast).to.eql({
+        type: 'QueryNode',
+        select: [],
+        from: [],
+        where: [
+          {
+            type: 'ListNode',
+            items: [
+              {
+                type: 'WhereNode',
+                lhs: {
+                  type: 'IdentifierNode',
+                  ids: ['a']
+                },
+                op: {
+                  type: 'OperatorNode',
+                  operator: '='
+                },
+                rhs: {
+                  type: 'ValueNode',
+                  value: 1
+                },
+                bool: 'and',
+                not: false
+              },
+              {
+                type: 'WhereNode',
+                lhs: {
+                  type: 'IdentifierNode',
+                  ids: ['b']
+                },
+                op: {
+                  type: 'OperatorNode',
+                  operator: '='
+                },
+                rhs: {
+                  type: 'ValueNode',
+                  value: 2
+                },
+                bool: 'or',
+                not: false
+              }
+            ]
+          }
+        ],
+        alias: null
+      });
+    });
+
     it(`where('table.column', '>', 'value')`, () => {
       const builder = query().where('table.column', '>', 'value');
 
@@ -345,40 +400,631 @@ describe('AST', () => {
       });
     });
 
-    it.skip(`test all variations of where methods`, () => {
-      const N = 100000;
-      const t0 = Date.now();
+    it(`test all variations of where methods`, () => {
+      const builder = query()
+        .where('a', '>', 1)
+        .andWhere('b', '>', 1)
+        .whereNot('b', 'is', null)
+        .andWhereNot('b', '>', 20)
+        .orWhere('a', '<', 2)
+        .orWhereNot('b', false)
+        .whereIn('c', [1, 2, 3])
+        .andWhereIn('c', [4, 5, 6])
+        .orWhereIn('d', [1, 2])
+        .whereNotIn('e', [1, 2])
+        .orWhereNotIn(
+          'e',
+          query()
+            .from('foo')
+            .select('*')
+        )
+        .whereBetween('d', [100, 200])
+        .andWhereBetween('f', ['a', 'b'])
+        .orWhereBetween('g', ['x', 'y'])
+        .whereNotBetween('h', [1, 2])
+        .andWhereNotBetween('h', [2, 3])
+        .orWhereNotBetween('i', [3, 4])
+        .whereExists(
+          query()
+            .select('*')
+            .from('foo')
+        )
+        .andWhereExists(qb => qb.select('id').from('bar'))
+        .orWhereExists(qb => qb.select('id').from('bar'))
+        .orWhereNotExists(qb => qb.select('id').from('bar'))
+        .andWhereNotExists(qb => qb.select('id').from('bar'));
 
-      for (let i = 0; i < N; ++i) {
-        const builder = query()
-          .where('a', '>', 1)
-          .andWhere('b', '>', 1)
-          .whereNot('b', 'is', null)
-          .andWhereNot('b', '>', 20)
-          .orWhere('a', '<', 2)
-          .orWhereNot('b', false)
-          .whereIn('c', [1, 2, 3])
-          .andWhereIn('c', [4, 5, 6])
-          .orWhereIn('d', [1, 2])
-          .whereNotIn('e', [1, 2])
-          .orWhereNotIn(
-            'e',
-            query()
-              .from('foo')
-              .select('*')
-          )
-          .whereBetween('d', [100, 200])
-          .andWhereBetween('f', ['a', 'b'])
-          .orWhereBetween('g', ['x', 'y'])
-          .whereNotBetween('h', [1, 2])
-          .andWhereNotBetween('h', [2, 3])
-          .orWhereNotBetween('i', [3, 4]);
-      }
-
-      const t1 = Date.now();
-      console.log('time ' + ((t1 - t0) / N) + ' ms');
-
-      //logAst(builder.ast);
+      expect(builder.ast).to.eql({
+        type: 'QueryNode',
+        select: [],
+        from: [],
+        where: [
+          {
+            type: 'WhereNode',
+            lhs: {
+              type: 'IdentifierNode',
+              ids: ['a']
+            },
+            op: {
+              type: 'OperatorNode',
+              operator: '>'
+            },
+            rhs: {
+              type: 'ValueNode',
+              value: 1
+            },
+            bool: 'and',
+            not: false
+          },
+          {
+            type: 'WhereNode',
+            lhs: {
+              type: 'IdentifierNode',
+              ids: ['b']
+            },
+            op: {
+              type: 'OperatorNode',
+              operator: '>'
+            },
+            rhs: {
+              type: 'ValueNode',
+              value: 1
+            },
+            bool: 'and',
+            not: false
+          },
+          {
+            type: 'WhereNode',
+            lhs: {
+              type: 'IdentifierNode',
+              ids: ['b']
+            },
+            op: {
+              type: 'OperatorNode',
+              operator: 'is'
+            },
+            rhs: {
+              type: 'ValueNode',
+              value: null
+            },
+            bool: 'and',
+            not: true
+          },
+          {
+            type: 'WhereNode',
+            lhs: {
+              type: 'IdentifierNode',
+              ids: ['b']
+            },
+            op: {
+              type: 'OperatorNode',
+              operator: '>'
+            },
+            rhs: {
+              type: 'ValueNode',
+              value: 20
+            },
+            bool: 'and',
+            not: true
+          },
+          {
+            type: 'WhereNode',
+            lhs: {
+              type: 'IdentifierNode',
+              ids: ['a']
+            },
+            op: {
+              type: 'OperatorNode',
+              operator: '<'
+            },
+            rhs: {
+              type: 'ValueNode',
+              value: 2
+            },
+            bool: 'or',
+            not: false
+          },
+          {
+            type: 'WhereNode',
+            lhs: {
+              type: 'IdentifierNode',
+              ids: ['b']
+            },
+            op: {
+              type: 'OperatorNode',
+              operator: '='
+            },
+            rhs: {
+              type: 'ValueNode',
+              value: false
+            },
+            bool: 'or',
+            not: true
+          },
+          {
+            type: 'WhereNode',
+            lhs: {
+              type: 'IdentifierNode',
+              ids: ['c']
+            },
+            op: {
+              type: 'OperatorNode',
+              operator: 'in'
+            },
+            rhs: {
+              type: 'ListNode',
+              items: [
+                {
+                  type: 'ValueNode',
+                  value: 1
+                },
+                {
+                  type: 'ValueNode',
+                  value: 2
+                },
+                {
+                  type: 'ValueNode',
+                  value: 3
+                }
+              ]
+            },
+            bool: 'and',
+            not: false
+          },
+          {
+            type: 'WhereNode',
+            lhs: {
+              type: 'IdentifierNode',
+              ids: ['c']
+            },
+            op: {
+              type: 'OperatorNode',
+              operator: 'in'
+            },
+            rhs: {
+              type: 'ListNode',
+              items: [
+                {
+                  type: 'ValueNode',
+                  value: 4
+                },
+                {
+                  type: 'ValueNode',
+                  value: 5
+                },
+                {
+                  type: 'ValueNode',
+                  value: 6
+                }
+              ]
+            },
+            bool: 'and',
+            not: false
+          },
+          {
+            type: 'WhereNode',
+            lhs: {
+              type: 'IdentifierNode',
+              ids: ['d']
+            },
+            op: {
+              type: 'OperatorNode',
+              operator: 'in'
+            },
+            rhs: {
+              type: 'ListNode',
+              items: [
+                {
+                  type: 'ValueNode',
+                  value: 1
+                },
+                {
+                  type: 'ValueNode',
+                  value: 2
+                }
+              ]
+            },
+            bool: 'or',
+            not: false
+          },
+          {
+            type: 'WhereNode',
+            lhs: {
+              type: 'IdentifierNode',
+              ids: ['e']
+            },
+            op: {
+              type: 'OperatorNode',
+              operator: 'in'
+            },
+            rhs: {
+              type: 'ListNode',
+              items: [
+                {
+                  type: 'ValueNode',
+                  value: 1
+                },
+                {
+                  type: 'ValueNode',
+                  value: 2
+                }
+              ]
+            },
+            bool: 'and',
+            not: true
+          },
+          {
+            type: 'WhereNode',
+            lhs: {
+              type: 'IdentifierNode',
+              ids: ['e']
+            },
+            op: {
+              type: 'OperatorNode',
+              operator: 'in'
+            },
+            rhs: {
+              type: 'QueryNode',
+              select: [
+                {
+                  type: 'SelectNode',
+                  selection: {
+                    type: 'IdentifierNode',
+                    ids: ['*']
+                  },
+                  alias: null
+                }
+              ],
+              from: [
+                {
+                  type: 'FromNode',
+                  from: {
+                    type: 'IdentifierNode',
+                    ids: ['foo']
+                  },
+                  alias: null
+                }
+              ],
+              where: [],
+              alias: null
+            },
+            bool: 'or',
+            not: true
+          },
+          {
+            type: 'WhereNode',
+            lhs: {
+              type: 'IdentifierNode',
+              ids: ['d']
+            },
+            op: {
+              type: 'OperatorNode',
+              operator: 'between'
+            },
+            rhs: {
+              type: 'ListNode',
+              items: [
+                {
+                  type: 'ValueNode',
+                  value: 100
+                },
+                {
+                  type: 'ValueNode',
+                  value: 200
+                }
+              ]
+            },
+            bool: 'and',
+            not: false
+          },
+          {
+            type: 'WhereNode',
+            lhs: {
+              type: 'IdentifierNode',
+              ids: ['f']
+            },
+            op: {
+              type: 'OperatorNode',
+              operator: 'between'
+            },
+            rhs: {
+              type: 'ListNode',
+              items: [
+                {
+                  type: 'ValueNode',
+                  value: 'a'
+                },
+                {
+                  type: 'ValueNode',
+                  value: 'b'
+                }
+              ]
+            },
+            bool: 'and',
+            not: false
+          },
+          {
+            type: 'WhereNode',
+            lhs: {
+              type: 'IdentifierNode',
+              ids: ['g']
+            },
+            op: {
+              type: 'OperatorNode',
+              operator: 'between'
+            },
+            rhs: {
+              type: 'ListNode',
+              items: [
+                {
+                  type: 'ValueNode',
+                  value: 'x'
+                },
+                {
+                  type: 'ValueNode',
+                  value: 'y'
+                }
+              ]
+            },
+            bool: 'or',
+            not: false
+          },
+          {
+            type: 'WhereNode',
+            lhs: {
+              type: 'IdentifierNode',
+              ids: ['h']
+            },
+            op: {
+              type: 'OperatorNode',
+              operator: 'between'
+            },
+            rhs: {
+              type: 'ListNode',
+              items: [
+                {
+                  type: 'ValueNode',
+                  value: 1
+                },
+                {
+                  type: 'ValueNode',
+                  value: 2
+                }
+              ]
+            },
+            bool: 'and',
+            not: true
+          },
+          {
+            type: 'WhereNode',
+            lhs: {
+              type: 'IdentifierNode',
+              ids: ['h']
+            },
+            op: {
+              type: 'OperatorNode',
+              operator: 'between'
+            },
+            rhs: {
+              type: 'ListNode',
+              items: [
+                {
+                  type: 'ValueNode',
+                  value: 2
+                },
+                {
+                  type: 'ValueNode',
+                  value: 3
+                }
+              ]
+            },
+            bool: 'and',
+            not: true
+          },
+          {
+            type: 'WhereNode',
+            lhs: {
+              type: 'IdentifierNode',
+              ids: ['i']
+            },
+            op: {
+              type: 'OperatorNode',
+              operator: 'between'
+            },
+            rhs: {
+              type: 'ListNode',
+              items: [
+                {
+                  type: 'ValueNode',
+                  value: 3
+                },
+                {
+                  type: 'ValueNode',
+                  value: 4
+                }
+              ]
+            },
+            bool: 'or',
+            not: true
+          },
+          {
+            type: 'WhereNode',
+            lhs: null,
+            op: {
+              type: 'OperatorNode',
+              operator: 'exists'
+            },
+            rhs: {
+              type: 'QueryNode',
+              select: [
+                {
+                  type: 'SelectNode',
+                  selection: {
+                    type: 'IdentifierNode',
+                    ids: ['*']
+                  },
+                  alias: null
+                }
+              ],
+              from: [
+                {
+                  type: 'FromNode',
+                  from: {
+                    type: 'IdentifierNode',
+                    ids: ['foo']
+                  },
+                  alias: null
+                }
+              ],
+              where: [],
+              alias: null
+            },
+            bool: 'and',
+            not: false
+          },
+          {
+            type: 'WhereNode',
+            lhs: null,
+            op: {
+              type: 'OperatorNode',
+              operator: 'exists'
+            },
+            rhs: {
+              type: 'QueryNode',
+              select: [
+                {
+                  type: 'SelectNode',
+                  selection: {
+                    type: 'IdentifierNode',
+                    ids: ['id']
+                  },
+                  alias: null
+                }
+              ],
+              from: [
+                {
+                  type: 'FromNode',
+                  from: {
+                    type: 'IdentifierNode',
+                    ids: ['bar']
+                  },
+                  alias: null
+                }
+              ],
+              where: [],
+              alias: null
+            },
+            bool: 'and',
+            not: false
+          },
+          {
+            type: 'WhereNode',
+            lhs: null,
+            op: {
+              type: 'OperatorNode',
+              operator: 'exists'
+            },
+            rhs: {
+              type: 'QueryNode',
+              select: [
+                {
+                  type: 'SelectNode',
+                  selection: {
+                    type: 'IdentifierNode',
+                    ids: ['id']
+                  },
+                  alias: null
+                }
+              ],
+              from: [
+                {
+                  type: 'FromNode',
+                  from: {
+                    type: 'IdentifierNode',
+                    ids: ['bar']
+                  },
+                  alias: null
+                }
+              ],
+              where: [],
+              alias: null
+            },
+            bool: 'or',
+            not: false
+          },
+          {
+            type: 'WhereNode',
+            lhs: null,
+            op: {
+              type: 'OperatorNode',
+              operator: 'exists'
+            },
+            rhs: {
+              type: 'QueryNode',
+              select: [
+                {
+                  type: 'SelectNode',
+                  selection: {
+                    type: 'IdentifierNode',
+                    ids: ['id']
+                  },
+                  alias: null
+                }
+              ],
+              from: [
+                {
+                  type: 'FromNode',
+                  from: {
+                    type: 'IdentifierNode',
+                    ids: ['bar']
+                  },
+                  alias: null
+                }
+              ],
+              where: [],
+              alias: null
+            },
+            bool: 'or',
+            not: true
+          },
+          {
+            type: 'WhereNode',
+            lhs: null,
+            op: {
+              type: 'OperatorNode',
+              operator: 'exists'
+            },
+            rhs: {
+              type: 'QueryNode',
+              select: [
+                {
+                  type: 'SelectNode',
+                  selection: {
+                    type: 'IdentifierNode',
+                    ids: ['id']
+                  },
+                  alias: null
+                }
+              ],
+              from: [
+                {
+                  type: 'FromNode',
+                  from: {
+                    type: 'IdentifierNode',
+                    ids: ['bar']
+                  },
+                  alias: null
+                }
+              ],
+              where: [],
+              alias: null
+            },
+            bool: 'and',
+            not: true
+          }
+        ],
+        alias: null
+      });
 
       //expect(builder.ast).to.eql({});
     });
