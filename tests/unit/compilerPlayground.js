@@ -21,7 +21,8 @@ describe('compiler playground', () => {
           .where('id', 1);
       });
 
-    const { sql, bindings } = QueryCompiler.compile(builder.ast);
+    const compiler = new QueryCompiler();
+    const { sql, bindings } = compiler.compile(builder.ast);
 
     console.log(sql, bindings);
   });
