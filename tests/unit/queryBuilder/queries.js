@@ -8,7 +8,7 @@ const customWrapperConfig = {
 };
 
 const clientsWithCustomIdentifierWrapper = {};
-const clientsWithNullAsDefault = {}
+const clientsWithNullAsDefault = {};
 const clients = {};
 
 function qb() {
