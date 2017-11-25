@@ -49,7 +49,7 @@ describe('Custom identifier wrapping', function() {
   });
 });
 
-describe.only('QueryBuilder', function() {
+describe('QueryBuilder', function() {
   it('basic select', function() {
     testsql(
       qb()
@@ -1141,7 +1141,6 @@ describe.only('QueryBuilder', function() {
         .from('names')
         .where('names.id', '>', 1)
         .or.where(function() {
-          console.log('tits', this);
           this.where('names.first_name', 'like', 'Tim%').and.where('names.id', '>', 10);
         });
     });
