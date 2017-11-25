@@ -10,6 +10,7 @@ describe('AST', () => {
       expect(builder.ast).to.eql({
         type: 'QueryNode',
         from: [],
+        having: [],
         where: [],
         select: [
           {
@@ -39,6 +40,7 @@ describe('AST', () => {
       expect(builder.ast).to.eql({
         type: 'QueryNode',
         from: [],
+        having: [],
         where: [],
         select: [
           {
@@ -68,6 +70,7 @@ describe('AST', () => {
       expect(builder.ast).to.eql({
         type: 'QueryNode',
         from: [],
+        having: [],
         where: [],
         select: [
           {
@@ -100,6 +103,7 @@ describe('AST', () => {
       expect(builder.ast).to.eql({
         type: 'QueryNode',
         from: [],
+        having: [],
         where: [],
         select: [
           {
@@ -132,6 +136,7 @@ describe('AST', () => {
       expect(builder.ast).to.eql({
         type: 'QueryNode',
         from: [],
+        having: [],
         where: [],
         select: [
           {
@@ -167,6 +172,7 @@ describe('AST', () => {
       expect(builder.ast).to.eql({
         type: 'QueryNode',
         from: [],
+        having: [],
         where: [],
         select: [
           {
@@ -207,6 +213,7 @@ describe('AST', () => {
       expect(builder.ast).to.eql({
         type: 'QueryNode',
         from: [],
+        having: [],
         where: [],
         select: [
           {
@@ -236,6 +243,7 @@ describe('AST', () => {
             selection: {
               type: 'QueryNode',
               where: [],
+              having: [],
               from: [
                 {
                   type: 'FromNode',

@@ -5,7 +5,7 @@ const { query, logAst } = require('../../testUtils');
 describe('AST', () => {
   describe('raw', () => {
     it(`raw("select * from ??", "users")`, () => {
-      const node = raw('select * from ??', 'users');
+      const node = raw('select * from ??', 'users').ast;
 
       expect(node).to.eql({
         type: 'RawNode',
@@ -25,7 +25,7 @@ describe('AST', () => {
     });
 
     it(`raw("select * from :table:", {table: "users"})`, () => {
-      const node = raw('select * from :table:', { table: 'users' });
+      const node = raw('select * from :table:', { table: 'users' }).ast;
 
       expect(node).to.eql({
         type: 'RawNode',
@@ -45,7 +45,7 @@ describe('AST', () => {
     });
 
     it(`raw("select * from ?? where foo = ?", "users", "bar")`, () => {
-      const node = raw('select * from ?? where foo = ?', 'users', 'bar');
+      const node = raw('select * from ?? where foo = ?', 'users', 'bar').ast;
 
       expect(node).to.eql({
         type: 'RawNode',
@@ -74,7 +74,7 @@ describe('AST', () => {
     });
 
     it(`raw("select * from ?? where foo = ?", ["users", "bar"])`, () => {
-      const node = raw('select * from ?? where foo = ?', ['users', 'bar']);
+      const node = raw('select * from ?? where foo = ?', ['users', 'bar']).ast;
 
       expect(node).to.eql({
         type: 'RawNode',
@@ -103,7 +103,7 @@ describe('AST', () => {
     });
 
     it(`raw("select * from ?? where foo \\?| ?", ["users", "bar"])`, () => {
-      const node = raw('select * from ?? where foo \\?| ?', ['users', 'bar']);
+      const node = raw('select * from ?? where foo \\?| ?', ['users', 'bar']).ast;
 
       expect(node).to.eql({
         type: 'RawNode',
@@ -135,7 +135,7 @@ describe('AST', () => {
       const node = raw('select * from :table: where foo = :foo', {
         table: 'users',
         foo: 'bar'
-      });
+      }).ast;
 
       expect(node).to.eql({
         type: 'RawNode',
@@ -167,7 +167,7 @@ describe('AST', () => {
       const node = raw('select * from :theTable: where foo = :fooBar', {
         theTable: 'users',
         fooBar: 'bar'
-      });
+      }).ast;
 
       expect(node).to.eql({
         type: 'RawNode',

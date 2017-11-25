@@ -11,6 +11,7 @@ describe('AST', () => {
         type: 'QueryNode',
         select: [],
         from: [],
+        having: [],
         where: [
           {
             type: 'WhereNode',
@@ -41,6 +42,7 @@ describe('AST', () => {
         type: 'QueryNode',
         select: [],
         from: [],
+        having: [],
         where: [
           {
             type: 'WhereNode',
@@ -74,6 +76,7 @@ describe('AST', () => {
         type: 'QueryNode',
         select: [],
         from: [],
+        having: [],
         where: [
           {
             type: 'ListNode',
@@ -126,6 +129,7 @@ describe('AST', () => {
         type: 'QueryNode',
         select: [],
         from: [],
+        having: [],
         where: [
           {
             type: 'WhereNode',
@@ -156,6 +160,7 @@ describe('AST', () => {
         type: 'QueryNode',
         select: [],
         from: [],
+        having: [],
         where: [
           {
             type: 'WhereNode',
@@ -188,6 +193,7 @@ describe('AST', () => {
         type: 'QueryNode',
         select: [],
         from: [],
+        having: [],
         where: [
           {
             type: 'WhereNode',
@@ -218,6 +224,7 @@ describe('AST', () => {
         type: 'QueryNode',
         select: [],
         from: [],
+        having: [],
         where: [
           {
             type: 'WhereNode',
@@ -257,6 +264,7 @@ describe('AST', () => {
         type: 'QueryNode',
         select: [],
         from: [],
+        having: [],
         where: [
           {
             type: 'WhereNode',
@@ -307,6 +315,7 @@ describe('AST', () => {
         type: 'QueryNode',
         select: [],
         from: [],
+        having: [],
         where: [
           {
             type: 'ListNode',
@@ -359,6 +368,7 @@ describe('AST', () => {
         type: 'QueryNode',
         select: [],
         from: [],
+        having: [],
         where: [
           {
             type: 'WhereNode',
@@ -369,6 +379,7 @@ describe('AST', () => {
             },
             rhs: {
               type: 'QueryNode',
+              having: [],
               select: [
                 {
                   type: 'SelectNode',
@@ -438,6 +449,7 @@ describe('AST', () => {
         type: 'QueryNode',
         select: [],
         from: [],
+        having: [],
         where: [
           {
             type: 'WhereNode',
@@ -665,6 +677,7 @@ describe('AST', () => {
             },
             rhs: {
               type: 'QueryNode',
+              having: [],
               select: [
                 {
                   type: 'SelectNode',
@@ -856,6 +869,7 @@ describe('AST', () => {
             },
             rhs: {
               type: 'QueryNode',
+              having: [],
               select: [
                 {
                   type: 'SelectNode',
@@ -891,6 +905,7 @@ describe('AST', () => {
             },
             rhs: {
               type: 'QueryNode',
+              having: [],
               select: [
                 {
                   type: 'SelectNode',
@@ -926,6 +941,7 @@ describe('AST', () => {
             },
             rhs: {
               type: 'QueryNode',
+              having: [],
               select: [
                 {
                   type: 'SelectNode',
@@ -961,6 +977,7 @@ describe('AST', () => {
             },
             rhs: {
               type: 'QueryNode',
+              having: [],
               select: [
                 {
                   type: 'SelectNode',
@@ -996,6 +1013,7 @@ describe('AST', () => {
             },
             rhs: {
               type: 'QueryNode',
+              having: [],
               select: [
                 {
                   type: 'SelectNode',

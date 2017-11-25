@@ -11,6 +11,7 @@ describe('AST', () => {
         type: 'QueryNode',
         select: [],
         where: [],
+        having: [],
         from: [
           {
             type: 'FromNode',
@@ -40,6 +41,7 @@ describe('AST', () => {
         type: 'QueryNode',
         select: [],
         where: [],
+        having: [],
         from: [
           {
             type: 'FromNode',
@@ -69,6 +71,7 @@ describe('AST', () => {
         type: 'QueryNode',
         select: [],
         where: [],
+        having: [],
         from: [
           {
             type: 'FromNode',
@@ -101,6 +104,7 @@ describe('AST', () => {
         type: 'QueryNode',
         select: [],
         where: [],
+        having: [],
         from: [
           {
             type: 'FromNode',
@@ -133,6 +137,8 @@ describe('AST', () => {
         type: 'QueryNode',
         select: [],
         where: [],
+        having: [],
+        having: [],
         from: [
           {
             type: 'FromNode',
@@ -168,6 +174,7 @@ describe('AST', () => {
         type: 'QueryNode',
         select: [],
         where: [],
+        having: [],
         from: [
           {
             type: 'FromNode',
@@ -208,6 +215,8 @@ describe('AST', () => {
         type: 'QueryNode',
         select: [],
         where: [],
+        having: [],
+        having: [],
         from: [
           {
             type: 'FromNode',
@@ -246,6 +255,7 @@ describe('AST', () => {
                 }
               ],
               where: [],
+              having: [],
               from: [
                 {
                   type: 'FromNode',
