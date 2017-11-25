@@ -1,7 +1,7 @@
-const { QueryCompiler } = require('./lib/compilers/QueryCompiler');
-const { QueryBuilder } = require('./lib/builders/QueryBuilder');
+const { QueryCompiler } = require('./lib/compiler/QueryCompiler');
+const { QueryBuilder } = require('./lib/builder/QueryBuilder');
 const { AstBuilder } = require('./lib/ast/AstBuilder');
-const { raw } = require('./lib/builders/RawBuilder');
+const { raw } = require('./lib/builder/RawBuilder');
 
 module.exports = {
   QueryBuilder,

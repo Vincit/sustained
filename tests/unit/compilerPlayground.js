@@ -1,13 +1,16 @@
 const { expect } = require('chai');
 const { QueryBuilder, QueryCompiler, raw } = require('../../');
-const { query, logAst } = require('../testUtils');
+const { logAst } = require('../testUtils');
 
-describe('compiler playground', () => {
+describe('playground', () => {
   it('test', () => {
-    const builder = query()
+    const builder = QueryBuilder.create();
+    const compiler = QueryCompiler.create();
+
+    builder
       .select('a', 'b')
       .from([
-        query()
+        QueryBuilder.create()
           .select('*')
           .from('sub1')
           .as('tits'),
@@ -21,9 +24,40 @@ describe('compiler playground', () => {
           .where('id', 1);
       });
 
-    const compiler = new QueryCompiler();
-    const { sql, bindings } = compiler.compile(builder.ast);
+    const { sql, bindings } = builder.toSQL({ compiler });
 
-    console.log(sql, bindings);
+    //console.log(sql, bindings);
+  });
+
+  it('test 2', () => {
+    const query = () => {
+      const compiler = QueryCompiler.create();
+      return QueryBuilder.create({ compiler });
+    };
+
+    const knex = new Proxy(
+      (...args) => {
+        return query().from(...args);
+      },
+      {
+        get(target, prop) {
+          return (...args) => {
+            return query()[prop](...args);
+          };
+        }
+      }
+    );
+
+    console.log(
+      knex('foo')
+        .select('*')
+        .toSQL()
+    );
+    console.log(
+      knex
+        .select('*')
+        .from('tits')
+        .toSQL()
+    );
   });
 });
