@@ -1,6 +1,8 @@
 const { QueryBuilder, raw } = require('../../../');
 const { expect } = require('chai');
 
+return;
+
 const customWrapperConfig = {
   wrapIdentifier: (value, clientImpl) => {
     return clientImpl(value + '_wrapper_was_here');

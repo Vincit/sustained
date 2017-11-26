@@ -1,17 +1,13 @@
-const { expect } = require('chai');
 const { QueryBuilder, raw } = require('../../../');
-const { query, logAst } = require('../../testUtils');
+const { expect, query, logAst } = require('../../testUtils');
 
 describe('AST', () => {
   describe('where', () => {
     it(`where('column', 'value')`, () => {
       const builder = query().where('column', 'value');
 
-      expect(builder.ast).to.eql({
+      expect(builder.ast).to.containSubset({
         type: 'QueryNode',
-        select: [],
-        from: [],
-        having: [],
         where: [
           {
             type: 'WhereNode',
@@ -38,11 +34,8 @@ describe('AST', () => {
     it(`where('table.column', 'value')`, () => {
       const builder = query().where('table.column', 'value');
 
-      expect(builder.ast).to.eql({
+      expect(builder.ast).to.containSubset({
         type: 'QueryNode',
-        select: [],
-        from: [],
-        having: [],
         where: [
           {
             type: 'WhereNode',
@@ -72,11 +65,8 @@ describe('AST', () => {
         qb.where('a', 1).orWhere('b', 2);
       });
 
-      expect(builder.ast).to.eql({
+      expect(builder.ast).to.containSubset({
         type: 'QueryNode',
-        select: [],
-        from: [],
-        having: [],
         where: [
           {
             type: 'ListNode',
@@ -125,11 +115,8 @@ describe('AST', () => {
     it(`where('table.column', '>', 'value')`, () => {
       const builder = query().where('table.column', '>', 'value');
 
-      expect(builder.ast).to.eql({
+      expect(builder.ast).to.containSubset({
         type: 'QueryNode',
-        select: [],
-        from: [],
-        having: [],
         where: [
           {
             type: 'WhereNode',
@@ -156,11 +143,8 @@ describe('AST', () => {
     it(`where('schema.table.column', 'value')`, () => {
       const builder = query().where('schema.table.column', 'value');
 
-      expect(builder.ast).to.eql({
+      expect(builder.ast).to.containSubset({
         type: 'QueryNode',
-        select: [],
-        from: [],
-        having: [],
         where: [
           {
             type: 'WhereNode',
@@ -189,11 +173,8 @@ describe('AST', () => {
         'schema.table.column': 'value'
       });
 
-      expect(builder.ast).to.eql({
+      expect(builder.ast).to.containSubset({
         type: 'QueryNode',
-        select: [],
-        from: [],
-        having: [],
         where: [
           {
             type: 'WhereNode',
@@ -220,11 +201,8 @@ describe('AST', () => {
     it(`where("col", "between", [10, 20])`, () => {
       const builder = query().where('col', 'between', [10, 20]);
 
-      expect(builder.ast).to.eql({
+      expect(builder.ast).to.containSubset({
         type: 'QueryNode',
-        select: [],
-        from: [],
-        having: [],
         where: [
           {
             type: 'WhereNode',
@@ -260,11 +238,8 @@ describe('AST', () => {
     it(`where("col", "between", [10, raw('?', 20)])`, () => {
       const builder = query().where('col', 'between', [10, raw('?', 20)]);
 
-      expect(builder.ast).to.eql({
+      expect(builder.ast).to.containSubset({
         type: 'QueryNode',
-        select: [],
-        from: [],
-        having: [],
         where: [
           {
             type: 'WhereNode',
@@ -311,11 +286,8 @@ describe('AST', () => {
     it(`where(qb => qb.where('a', '>', 2).orWhere('a', '<', 4))`, () => {
       const builder = query().where(qb => qb.where('a', '>', 2).orWhere('a', '<', 4));
 
-      expect(builder.ast).to.eql({
+      expect(builder.ast).to.containSubset({
         type: 'QueryNode',
-        select: [],
-        from: [],
-        having: [],
         where: [
           {
             type: 'ListNode',
@@ -364,11 +336,8 @@ describe('AST', () => {
     it(`whereExists(qb => qb.from('foo').select('*'))`, () => {
       const builder = query().whereExists(qb => qb.from('foo').select('*'));
 
-      expect(builder.ast).to.eql({
+      expect(builder.ast).to.containSubset({
         type: 'QueryNode',
-        select: [],
-        from: [],
-        having: [],
         where: [
           {
             type: 'WhereNode',
@@ -380,6 +349,7 @@ describe('AST', () => {
             rhs: {
               type: 'QueryNode',
               having: [],
+              orderBy: [],
               select: [
                 {
                   type: 'SelectNode',
@@ -445,11 +415,8 @@ describe('AST', () => {
         .orWhereNotExists(qb => qb.select('id').from('bar'))
         .andWhereNotExists(qb => qb.select('id').from('bar'));
 
-      expect(builder.ast).to.eql({
+      expect(builder.ast).to.containSubset({
         type: 'QueryNode',
-        select: [],
-        from: [],
-        having: [],
         where: [
           {
             type: 'WhereNode',
@@ -677,7 +644,6 @@ describe('AST', () => {
             },
             rhs: {
               type: 'QueryNode',
-              having: [],
               select: [
                 {
                   type: 'SelectNode',
@@ -869,7 +835,6 @@ describe('AST', () => {
             },
             rhs: {
               type: 'QueryNode',
-              having: [],
               select: [
                 {
                   type: 'SelectNode',
@@ -905,7 +870,6 @@ describe('AST', () => {
             },
             rhs: {
               type: 'QueryNode',
-              having: [],
               select: [
                 {
                   type: 'SelectNode',
@@ -941,7 +905,6 @@ describe('AST', () => {
             },
             rhs: {
               type: 'QueryNode',
-              having: [],
               select: [
                 {
                   type: 'SelectNode',
@@ -977,7 +940,6 @@ describe('AST', () => {
             },
             rhs: {
               type: 'QueryNode',
-              having: [],
               select: [
                 {
                   type: 'SelectNode',
@@ -1013,7 +975,6 @@ describe('AST', () => {
             },
             rhs: {
               type: 'QueryNode',
-              having: [],
               select: [
                 {
                   type: 'SelectNode',
@@ -1043,8 +1004,6 @@ describe('AST', () => {
         ],
         alias: null
       });
-
-      //expect(builder.ast).to.eql({});
     });
   });
 });

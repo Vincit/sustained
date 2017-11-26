@@ -1,17 +1,20 @@
-const { expect } = require('chai');
 const { QueryBuilder, raw } = require('../../../');
-const { query, logAst } = require('../../testUtils');
+const { expect, query, logAst } = require('../../testUtils');
 
 describe('AST', () => {
   describe('from', () => {
     it(`from('table1', 'tableTwo')`, () => {
       const builder = query().from('table1', 'tableTwo');
 
-      expect(builder.ast).to.eql({
+      expect(builder.ast).to.containSubset({
         type: 'QueryNode',
+        queryType: 'select',
+        groupBy: [],
+        join: [],
         select: [],
         where: [],
         having: [],
+        orderBy: [],
         from: [
           {
             type: 'FromNode',
@@ -30,18 +33,17 @@ describe('AST', () => {
             alias: null
           }
         ],
-        alias: null
+        alias: null,
+        limit: null,
+        offset: null
       });
     });
 
     it(`from(['table1', 'tableTwo'])`, () => {
       const builder = query().from(['table1', 'tableTwo']);
 
-      expect(builder.ast).to.eql({
+      expect(builder.ast).to.containSubset({
         type: 'QueryNode',
-        select: [],
-        where: [],
-        having: [],
         from: [
           {
             type: 'FromNode',
@@ -59,19 +61,15 @@ describe('AST', () => {
             },
             alias: null
           }
-        ],
-        alias: null
+        ]
       });
     });
 
     it(`from(raw('?? as fb'), 'fooBar'))`, () => {
       const builder = query().from(raw('?? as fb', 'fooBar'));
 
-      expect(builder.ast).to.eql({
+      expect(builder.ast).to.containSubset({
         type: 'QueryNode',
-        select: [],
-        where: [],
-        having: [],
         from: [
           {
             type: 'FromNode',
@@ -92,19 +90,15 @@ describe('AST', () => {
             },
             alias: null
           }
-        ],
-        alias: null
+        ]
       });
     });
 
     it(`from([raw('?? as fb'), 'fooBar')])`, () => {
       const builder = query().from([raw('?? as fb', 'fooBar')]);
 
-      expect(builder.ast).to.eql({
+      expect(builder.ast).to.containSubset({
         type: 'QueryNode',
-        select: [],
-        where: [],
-        having: [],
         from: [
           {
             type: 'FromNode',
@@ -133,12 +127,8 @@ describe('AST', () => {
     it(`from('table1 as t', 'tableTwo as t2')`, () => {
       const builder = query().from('table1 as t', 'tableTwo as t2');
 
-      expect(builder.ast).to.eql({
+      expect(builder.ast).to.containSubset({
         type: 'QueryNode',
-        select: [],
-        where: [],
-        having: [],
-        having: [],
         from: [
           {
             type: 'FromNode',
@@ -170,11 +160,8 @@ describe('AST', () => {
     it(`from({alias1: 'table1', alias2: 'table2'})`, () => {
       const builder = query().table({ alias1: 'table1', alias2: 'table2' });
 
-      expect(builder.ast).to.eql({
+      expect(builder.ast).to.containSubset({
         type: 'QueryNode',
-        select: [],
-        where: [],
-        having: [],
         from: [
           {
             type: 'FromNode',
@@ -211,12 +198,8 @@ describe('AST', () => {
           .select('*')
       });
 
-      expect(builder.ast).to.eql({
+      expect(builder.ast).to.containSubset({
         type: 'QueryNode',
-        select: [],
-        where: [],
-        having: [],
-        having: [],
         from: [
           {
             type: 'FromNode',
@@ -254,8 +237,6 @@ describe('AST', () => {
                   alias: null
                 }
               ],
-              where: [],
-              having: [],
               from: [
                 {
                   type: 'FromNode',

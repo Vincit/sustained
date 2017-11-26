@@ -1,17 +1,13 @@
-const { expect } = require('chai');
 const { QueryBuilder, raw } = require('../../../');
-const { query, logAst } = require('../../testUtils');
+const { expect, query, logAst } = require('../../testUtils');
 
 describe('AST', () => {
   describe('select', () => {
     it(`select('col1', 'columnTwo')`, () => {
       const builder = query().select('col1', 'columnTwo');
 
-      expect(builder.ast).to.eql({
+      expect(builder.ast).to.containSubset({
         type: 'QueryNode',
-        from: [],
-        having: [],
-        where: [],
         select: [
           {
             type: 'SelectNode',
@@ -37,11 +33,8 @@ describe('AST', () => {
     it(`select(['col1', 'columnTwo'])`, () => {
       const builder = query().select(['col1', 'columnTwo']);
 
-      expect(builder.ast).to.eql({
+      expect(builder.ast).to.containSubset({
         type: 'QueryNode',
-        from: [],
-        having: [],
-        where: [],
         select: [
           {
             type: 'SelectNode',
@@ -67,11 +60,8 @@ describe('AST', () => {
     it(`select(raw('max(??)', 'fooBar'))`, () => {
       const builder = query().select(raw('max(??)', 'fooBar'));
 
-      expect(builder.ast).to.eql({
+      expect(builder.ast).to.containSubset({
         type: 'QueryNode',
-        from: [],
-        having: [],
-        where: [],
         select: [
           {
             type: 'SelectNode',
@@ -100,11 +90,8 @@ describe('AST', () => {
     it(`select([raw('max(??)', 'fooBar')])`, () => {
       const builder = query().select([raw('max(??)', 'fooBar')]);
 
-      expect(builder.ast).to.eql({
+      expect(builder.ast).to.containSubset({
         type: 'QueryNode',
-        from: [],
-        having: [],
-        where: [],
         select: [
           {
             type: 'SelectNode',
@@ -133,11 +120,8 @@ describe('AST', () => {
     it(`select('col1 as c', 'columnTwo as col2')`, () => {
       const builder = query().select('col1 as c', 'columnTwo as col2');
 
-      expect(builder.ast).to.eql({
+      expect(builder.ast).to.containSubset({
         type: 'QueryNode',
-        from: [],
-        having: [],
-        where: [],
         select: [
           {
             type: 'SelectNode',
@@ -169,11 +153,8 @@ describe('AST', () => {
     it(`select({alias1: 'col1', alias2: 'col2'})`, () => {
       const builder = query().select({ alias1: 'col1', alias2: 'col2' });
 
-      expect(builder.ast).to.eql({
+      expect(builder.ast).to.containSubset({
         type: 'QueryNode',
-        from: [],
-        having: [],
-        where: [],
         select: [
           {
             type: 'SelectNode',
@@ -210,11 +191,8 @@ describe('AST', () => {
           .select('subCol')
       });
 
-      expect(builder.ast).to.eql({
+      expect(builder.ast).to.containSubset({
         type: 'QueryNode',
-        from: [],
-        having: [],
-        where: [],
         select: [
           {
             type: 'SelectNode',
@@ -242,8 +220,6 @@ describe('AST', () => {
             type: 'SelectNode',
             selection: {
               type: 'QueryNode',
-              where: [],
-              having: [],
               from: [
                 {
                   type: 'FromNode',

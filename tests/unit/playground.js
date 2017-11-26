@@ -22,11 +22,13 @@ describe('playground', () => {
           .select('c')
           .from('sub2')
           .where('id', 1);
-      });
+      })
+      .groupBy('a', 'b.c')
+      .having('a', '<', 100);
 
     const { sql, bindings } = builder.toSQL({ compiler });
 
-    //console.log(sql, bindings);
+    console.log(sql, bindings);
   });
 
   it('test 2', () => {

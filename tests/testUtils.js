@@ -1,3 +1,7 @@
+const chai = require('chai');
+const chaiSubset = require('chai-subset');
+chai.use(chaiSubset);
+
 const { QueryBuilder } = require('../');
 
 function query() {
@@ -10,5 +14,6 @@ function logAst(ast) {
 
 module.exports = {
   query,
-  logAst
+  logAst,
+  expect: chai.expect
 };
