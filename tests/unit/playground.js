@@ -36,11 +36,20 @@ describe('playground', () => {
         qb.on('A.id', 'B.a_id').on('A.id2', 'B.a_id2');
       });
     */
+
+    /*
     builder.insert([{ a: 1, b: 2 }, { a: 3, c: 4 }]).into('x');
+    */
+
+    /*
+    builder.delete().from('foo').where('id', '<', 10);
+    */
+
+    builder.update({a: 1, b: 'x'}).table('foo');
 
     const { sql, bindings } = builder.toSQL({ compiler });
 
-    //console.log(sql, bindings);
+    console.log(sql, bindings);
   });
 
   it('test 2', () => {
