@@ -1,12 +1,12 @@
-const { expect } = require('chai');
 const { QueryBuilder, QueryCompiler, raw } = require('../../');
-const { logAst } = require('../testUtils');
+const { expect, logAst } = require('../testUtils');
 
 describe('playground', () => {
   it('test', () => {
     const builder = QueryBuilder.create();
     const compiler = QueryCompiler.create();
 
+    /*
     builder
       .select('a', 'b')
       .from([
@@ -25,10 +25,22 @@ describe('playground', () => {
       })
       .groupBy('a', 'b.c')
       .having('a', '<', 100);
+    */
+
+    /*
+    builder
+      .select('*')
+      .from('A')
+      .leftOuterJoin('C', 'C.id', '>', 'A.id')
+      .join('B', qb => {
+        qb.on('A.id', 'B.a_id').on('A.id2', 'B.a_id2');
+      });
+    */
+    builder.insert([{ a: 1, b: 2 }, { a: 3, c: 4 }]).into('x');
 
     const { sql, bindings } = builder.toSQL({ compiler });
 
-    console.log(sql, bindings);
+    //console.log(sql, bindings);
   });
 
   it('test 2', () => {
@@ -50,6 +62,7 @@ describe('playground', () => {
       }
     );
 
+    /*
     console.log(
       knex('foo')
         .select('*')
@@ -61,5 +74,6 @@ describe('playground', () => {
         .from('tits')
         .toSQL()
     );
+    */
   });
 });
