@@ -18,7 +18,7 @@ describe('AST', () => {
         from: [
           {
             type: 'FromNode',
-            from: {
+            identifier: {
               type: 'IdentifierNode',
               ids: ['table1']
             },
@@ -26,7 +26,7 @@ describe('AST', () => {
           },
           {
             type: 'FromNode',
-            from: {
+            identifier: {
               type: 'IdentifierNode',
               ids: ['tableTwo']
             },
@@ -47,7 +47,7 @@ describe('AST', () => {
         from: [
           {
             type: 'FromNode',
-            from: {
+            identifier: {
               type: 'IdentifierNode',
               ids: ['table1']
             },
@@ -55,7 +55,7 @@ describe('AST', () => {
           },
           {
             type: 'FromNode',
-            from: {
+            identifier: {
               type: 'IdentifierNode',
               ids: ['tableTwo']
             },
@@ -73,7 +73,7 @@ describe('AST', () => {
         from: [
           {
             type: 'FromNode',
-            from: {
+            identifier: {
               type: 'RawNode',
               sql: '?? as fb',
               bindings: [
@@ -102,7 +102,7 @@ describe('AST', () => {
         from: [
           {
             type: 'FromNode',
-            from: {
+            identifier: {
               type: 'RawNode',
               sql: '?? as fb',
               bindings: [
@@ -132,7 +132,7 @@ describe('AST', () => {
         from: [
           {
             type: 'FromNode',
-            from: {
+            identifier: {
               type: 'IdentifierNode',
               ids: ['table1']
             },
@@ -143,7 +143,7 @@ describe('AST', () => {
           },
           {
             type: 'FromNode',
-            from: {
+            identifier: {
               type: 'IdentifierNode',
               ids: ['tableTwo']
             },
@@ -165,7 +165,7 @@ describe('AST', () => {
         from: [
           {
             type: 'FromNode',
-            from: {
+            identifier: {
               type: 'IdentifierNode',
               ids: ['table1']
             },
@@ -176,7 +176,7 @@ describe('AST', () => {
           },
           {
             type: 'FromNode',
-            from: {
+            identifier: {
               type: 'IdentifierNode',
               ids: ['table2']
             },
@@ -203,7 +203,7 @@ describe('AST', () => {
         from: [
           {
             type: 'FromNode',
-            from: {
+            identifier: {
               type: 'RawNode',
               sql: '??',
               bindings: [
@@ -225,12 +225,12 @@ describe('AST', () => {
           },
           {
             type: 'FromNode',
-            from: {
+            identifier: {
               type: 'QueryNode',
               select: [
                 {
                   type: 'SelectNode',
-                  selection: {
+                  identifier: {
                     type: 'IdentifierNode',
                     ids: ['*']
                   },
@@ -240,7 +240,7 @@ describe('AST', () => {
               from: [
                 {
                   type: 'FromNode',
-                  from: {
+                  identifier: {
                     type: 'IdentifierNode',
                     ids: ['sub1']
                   },

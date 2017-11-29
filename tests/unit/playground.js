@@ -37,15 +37,24 @@ describe('playground', () => {
       });
     */
 
-    /*
-    builder.insert([{ a: 1, b: 2 }, { a: 3, c: 4 }]).into('x');
-    */
+    //builder.insert([{ a: 1, b: 2 }, { a: 3, c: 4 }]).into('x');
 
     /*
     builder.delete().from('foo').where('id', '<', 10);
     */
 
+    /*
     builder.update({a: 1, b: 'x'}).table('foo');
+    */
+
+    builder
+      .select('*')
+      .from('t1')
+      .where('id', 1)
+      .join('t2', 't2.id', 't1.id')
+      .withSchema('s');
+
+    // builder.ast = builder.ast.clone();
 
     const { sql, bindings } = builder.toSQL({ compiler });
 

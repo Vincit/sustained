@@ -1,13 +1,12 @@
-const { expect } = require('chai');
 const { QueryBuilder, raw } = require('../../../');
-const { query, logAst } = require('../../testUtils');
+const { expect, query, logAst } = require('../../testUtils');
 
 describe('AST', () => {
   describe('raw', () => {
     it(`raw("select * from ??", "users")`, () => {
       const node = raw('select * from ??', 'users').ast;
 
-      expect(node).to.eql({
+      expect(node).to.containSubset({
         type: 'RawNode',
         sql: 'select * from ??',
         bindings: [
@@ -27,7 +26,7 @@ describe('AST', () => {
     it(`raw("select * from :table:", {table: "users"})`, () => {
       const node = raw('select * from :table:', { table: 'users' }).ast;
 
-      expect(node).to.eql({
+      expect(node).to.containSubset({
         type: 'RawNode',
         sql: 'select * from :table:',
         bindings: [
@@ -47,7 +46,7 @@ describe('AST', () => {
     it(`raw("select * from ?? where foo = ?", "users", "bar")`, () => {
       const node = raw('select * from ?? where foo = ?', 'users', 'bar').ast;
 
-      expect(node).to.eql({
+      expect(node).to.containSubset({
         type: 'RawNode',
         sql: 'select * from ?? where foo = ?',
         bindings: [
@@ -76,7 +75,7 @@ describe('AST', () => {
     it(`raw("select * from ?? where foo = ?", ["users", "bar"])`, () => {
       const node = raw('select * from ?? where foo = ?', ['users', 'bar']).ast;
 
-      expect(node).to.eql({
+      expect(node).to.containSubset({
         type: 'RawNode',
         sql: 'select * from ?? where foo = ?',
         bindings: [
@@ -105,7 +104,7 @@ describe('AST', () => {
     it(`raw("select * from ?? where foo \\?| ?", ["users", "bar"])`, () => {
       const node = raw('select * from ?? where foo \\?| ?', ['users', 'bar']).ast;
 
-      expect(node).to.eql({
+      expect(node).to.containSubset({
         type: 'RawNode',
         sql: 'select * from ?? where foo \\?| ?',
         bindings: [
@@ -137,7 +136,7 @@ describe('AST', () => {
         foo: 'bar'
       }).ast;
 
-      expect(node).to.eql({
+      expect(node).to.containSubset({
         type: 'RawNode',
         sql: 'select * from :table: where foo = :foo',
         bindings: [
@@ -169,7 +168,7 @@ describe('AST', () => {
         fooBar: 'bar'
       }).ast;
 
-      expect(node).to.eql({
+      expect(node).to.containSubset({
         type: 'RawNode',
         sql: 'select * from :theTable: where foo = :fooBar',
         bindings: [

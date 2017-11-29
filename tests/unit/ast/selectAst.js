@@ -11,7 +11,7 @@ describe('AST', () => {
         select: [
           {
             type: 'SelectNode',
-            selection: {
+            identifier: {
               type: 'IdentifierNode',
               ids: ['col1']
             },
@@ -19,7 +19,7 @@ describe('AST', () => {
           },
           {
             type: 'SelectNode',
-            selection: {
+            identifier: {
               type: 'IdentifierNode',
               ids: ['columnTwo']
             },
@@ -38,7 +38,7 @@ describe('AST', () => {
         select: [
           {
             type: 'SelectNode',
-            selection: {
+            identifier: {
               type: 'IdentifierNode',
               ids: ['col1']
             },
@@ -46,7 +46,7 @@ describe('AST', () => {
           },
           {
             type: 'SelectNode',
-            selection: {
+            identifier: {
               type: 'IdentifierNode',
               ids: ['columnTwo']
             },
@@ -65,7 +65,7 @@ describe('AST', () => {
         select: [
           {
             type: 'SelectNode',
-            selection: {
+            identifier: {
               type: 'RawNode',
               sql: 'max(??)',
               bindings: [
@@ -95,7 +95,7 @@ describe('AST', () => {
         select: [
           {
             type: 'SelectNode',
-            selection: {
+            identifier: {
               type: 'RawNode',
               sql: 'max(??)',
               bindings: [
@@ -125,7 +125,7 @@ describe('AST', () => {
         select: [
           {
             type: 'SelectNode',
-            selection: {
+            identifier: {
               type: 'IdentifierNode',
               ids: ['col1']
             },
@@ -136,7 +136,7 @@ describe('AST', () => {
           },
           {
             type: 'SelectNode',
-            selection: {
+            identifier: {
               type: 'IdentifierNode',
               ids: ['columnTwo']
             },
@@ -158,7 +158,7 @@ describe('AST', () => {
         select: [
           {
             type: 'SelectNode',
-            selection: {
+            identifier: {
               type: 'IdentifierNode',
               ids: ['col1']
             },
@@ -169,7 +169,7 @@ describe('AST', () => {
           },
           {
             type: 'SelectNode',
-            selection: {
+            identifier: {
               type: 'IdentifierNode',
               ids: ['col2']
             },
@@ -196,7 +196,7 @@ describe('AST', () => {
         select: [
           {
             type: 'SelectNode',
-            selection: {
+            identifier: {
               type: 'RawNode',
               sql: '??',
               bindings: [
@@ -218,12 +218,12 @@ describe('AST', () => {
           },
           {
             type: 'SelectNode',
-            selection: {
+            identifier: {
               type: 'QueryNode',
               from: [
                 {
                   type: 'FromNode',
-                  from: {
+                  identifier: {
                     type: 'IdentifierNode',
                     ids: ['sub1']
                   },
@@ -233,7 +233,7 @@ describe('AST', () => {
               select: [
                 {
                   type: 'SelectNode',
-                  selection: {
+                  identifier: {
                     type: 'IdentifierNode',
                     ids: ['subCol']
                   },

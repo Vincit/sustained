@@ -69,7 +69,9 @@ describe('AST', () => {
         type: 'QueryNode',
         where: [
           {
-            type: 'ListNode',
+            type: 'FilterGroupNode',
+            bool: 'and',
+            not: false,
             items: [
               {
                 type: 'WhereNode',
@@ -290,7 +292,9 @@ describe('AST', () => {
         type: 'QueryNode',
         where: [
           {
-            type: 'ListNode',
+            type: 'FilterGroupNode',
+            bool: 'and',
+            not: false,
             items: [
               {
                 type: 'WhereNode',
@@ -353,7 +357,7 @@ describe('AST', () => {
               select: [
                 {
                   type: 'SelectNode',
-                  selection: {
+                  identifier: {
                     type: 'IdentifierNode',
                     ids: ['*']
                   },
@@ -363,7 +367,7 @@ describe('AST', () => {
               from: [
                 {
                   type: 'FromNode',
-                  from: {
+                  identifier: {
                     type: 'IdentifierNode',
                     ids: ['foo']
                   },
@@ -647,7 +651,7 @@ describe('AST', () => {
               select: [
                 {
                   type: 'SelectNode',
-                  selection: {
+                  identifier: {
                     type: 'IdentifierNode',
                     ids: ['*']
                   },
@@ -657,7 +661,7 @@ describe('AST', () => {
               from: [
                 {
                   type: 'FromNode',
-                  from: {
+                  identifier: {
                     type: 'IdentifierNode',
                     ids: ['foo']
                   },
@@ -838,7 +842,7 @@ describe('AST', () => {
               select: [
                 {
                   type: 'SelectNode',
-                  selection: {
+                  identifier: {
                     type: 'IdentifierNode',
                     ids: ['*']
                   },
@@ -848,7 +852,7 @@ describe('AST', () => {
               from: [
                 {
                   type: 'FromNode',
-                  from: {
+                  identifier: {
                     type: 'IdentifierNode',
                     ids: ['foo']
                   },
@@ -873,7 +877,7 @@ describe('AST', () => {
               select: [
                 {
                   type: 'SelectNode',
-                  selection: {
+                  identifier: {
                     type: 'IdentifierNode',
                     ids: ['id']
                   },
@@ -883,7 +887,7 @@ describe('AST', () => {
               from: [
                 {
                   type: 'FromNode',
-                  from: {
+                  identifier: {
                     type: 'IdentifierNode',
                     ids: ['bar']
                   },
@@ -908,7 +912,7 @@ describe('AST', () => {
               select: [
                 {
                   type: 'SelectNode',
-                  selection: {
+                  identifier: {
                     type: 'IdentifierNode',
                     ids: ['id']
                   },
@@ -918,7 +922,7 @@ describe('AST', () => {
               from: [
                 {
                   type: 'FromNode',
-                  from: {
+                  identifier: {
                     type: 'IdentifierNode',
                     ids: ['bar']
                   },
@@ -943,7 +947,7 @@ describe('AST', () => {
               select: [
                 {
                   type: 'SelectNode',
-                  selection: {
+                  identifier: {
                     type: 'IdentifierNode',
                     ids: ['id']
                   },
@@ -953,7 +957,7 @@ describe('AST', () => {
               from: [
                 {
                   type: 'FromNode',
-                  from: {
+                  identifier: {
                     type: 'IdentifierNode',
                     ids: ['bar']
                   },
@@ -978,7 +982,7 @@ describe('AST', () => {
               select: [
                 {
                   type: 'SelectNode',
-                  selection: {
+                  identifier: {
                     type: 'IdentifierNode',
                     ids: ['id']
                   },
@@ -988,7 +992,7 @@ describe('AST', () => {
               from: [
                 {
                   type: 'FromNode',
-                  from: {
+                  identifier: {
                     type: 'IdentifierNode',
                     ids: ['bar']
                   },

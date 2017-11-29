@@ -1,17 +1,28 @@
 const { QueryBuilder, raw } = require('../../../');
 const { expect } = require('chai');
+const {
+  PostgreSQLQueryCompiler
+} = require('../../../lib/dialect/postgresql/PostgreSQLQueryCompiler');
 
-return;
-
-const customWrapperConfig = {
-  wrapIdentifier: (value, clientImpl) => {
-    return clientImpl(value + '_wrapper_was_here');
-  }
+const clients = {
+  postgres: new PostgreSQLQueryCompiler({
+    createBinding: () => '?'
+  })
 };
 
-const clientsWithCustomIdentifierWrapper = {};
-const clientsWithNullAsDefault = {};
-const clients = {};
+const clientsWithCustomIdentifierWrapper = {
+  postgres: new PostgreSQLQueryCompiler({
+    wrapIdentifier: (value, clientImpl) => clientImpl(value + '_wrapper_was_here'),
+    createBinding: () => '?'
+  })
+};
+
+const clientsWithNullAsDefault = {
+  postgres: new PostgreSQLQueryCompiler({
+    insertDefaultValue: null,
+    createBinding: () => '?'
+  })
+};
 
 function qb() {
   return QueryBuilder.create();
@@ -19,7 +30,26 @@ function qb() {
 
 function verifySqlResult(dialect, expectedObj, sqlObj) {}
 
-function testsql(chain, valuesToCheck, selectedClients) {}
+function testsql(builder, valuesToCheck, compilers = clients) {
+  Object.keys(valuesToCheck).forEach(dialect => {
+    const compiler = compilers[dialect];
+
+    if (compiler) {
+      const compileResult = builder.toSQL({ compiler });
+      const expectedSql = valuesToCheck[dialect];
+
+      if (typeof expectedSql == 'object') {
+        expect(compileResult.sql).to.equal(expectedSql.sql);
+
+        if (expectedSql.bindings) {
+          expect(compileResult.bindings).to.eql(expectedSql.bindings);
+        }
+      } else {
+        expect(compileResult.sql).to.equal(expectedSql);
+      }
+    }
+  });
+}
 
 function testNativeSql(chain, valuesToCheck, selectedClients) {}
 
@@ -621,15 +651,15 @@ describe('QueryBuilder', function() {
         .andWhereNotBetween('id', [1, 2]),
       {
         mysql: {
-          sql: 'select * from `users` where `name` = ? and `id` not between ? and ?',
+          sql: 'select * from `users` where `name` = ? and not `id` between ? and ?',
           bindings: ['user1', 1, 2]
         },
         mssql: {
-          sql: 'select * from [users] where [name] = ? and [id] not between ? and ?',
+          sql: 'select * from [users] where [name] = ? and not [id] between ? and ?',
           bindings: ['user1', 1, 2]
         },
         postgres: {
-          sql: 'select * from "users" where "name" = ? and "id" not between ? and ?',
+          sql: 'select * from "users" where "name" = ? and not "id" between ? and ?',
           bindings: ['user1', 1, 2]
         }
       }
@@ -667,15 +697,15 @@ describe('QueryBuilder', function() {
         .whereNotBetween('id', [1, 2]),
       {
         mysql: {
-          sql: 'select * from `users` where `id` not between ? and ?',
+          sql: 'select * from `users` where not `id` between ? and ?',
           bindings: [1, 2]
         },
         mssql: {
-          sql: 'select * from [users] where [id] not between ? and ?',
+          sql: 'select * from [users] where not [id] between ? and ?',
           bindings: [1, 2]
         },
         postgres: {
-          sql: 'select * from "users" where "id" not between ? and ?',
+          sql: 'select * from "users" where not "id" between ? and ?',
           bindings: [1, 2]
         }
       }
@@ -902,15 +932,15 @@ describe('QueryBuilder', function() {
         .whereNotIn('id', [1, 2, 3]),
       {
         mysql: {
-          sql: 'select * from `users` where `id` not in (?, ?, ?)',
+          sql: 'select * from `users` where not `id` in (?, ?, ?)',
           bindings: [1, 2, 3]
         },
         mssql: {
-          sql: 'select * from [users] where [id] not in (?, ?, ?)',
+          sql: 'select * from [users] where not [id] in (?, ?, ?)',
           bindings: [1, 2, 3]
         },
         postgres: {
-          sql: 'select * from "users" where "id" not in (?, ?, ?)',
+          sql: 'select * from "users" where not "id" in (?, ?, ?)',
           bindings: [1, 2, 3]
         }
       }
@@ -926,15 +956,15 @@ describe('QueryBuilder', function() {
         .or.not.whereIn('id', [1, 2, 3]),
       {
         mysql: {
-          sql: 'select * from `users` where `id` = ? or `id` not in (?, ?, ?)',
+          sql: 'select * from `users` where `id` = ? or not `id` in (?, ?, ?)',
           bindings: [1, 1, 2, 3]
         },
         mssql: {
-          sql: 'select * from [users] where [id] = ? or [id] not in (?, ?, ?)',
+          sql: 'select * from [users] where [id] = ? or not [id] in (?, ?, ?)',
           bindings: [1, 1, 2, 3]
         },
         postgres: {
-          sql: 'select * from "users" where "id" = ? or "id" not in (?, ?, ?)',
+          sql: 'select * from "users" where "id" = ? or not "id" in (?, ?, ?)',
           bindings: [1, 1, 2, 3]
         }
       }
@@ -973,15 +1003,15 @@ describe('QueryBuilder', function() {
         .not.whereIn('id', [1, 2, 3]),
       {
         mysql: {
-          sql: 'select * from `users` where `id` not in (?, ?, ?)',
+          sql: 'select * from `users` where not `id` in (?, ?, ?)',
           bindings: [1, 2, 3]
         },
         mssql: {
-          sql: 'select * from [users] where [id] not in (?, ?, ?)',
+          sql: 'select * from [users] where not [id] in (?, ?, ?)',
           bindings: [1, 2, 3]
         },
         postgres: {
-          sql: 'select * from "users" where "id" not in (?, ?, ?)',
+          sql: 'select * from "users" where not "id" in (?, ?, ?)',
           bindings: [1, 2, 3]
         }
       }
@@ -997,15 +1027,15 @@ describe('QueryBuilder', function() {
         .or.not.whereIn('id', [1, 2, 3]),
       {
         mysql: {
-          sql: 'select * from `users` where `id` = ? or `id` not in (?, ?, ?)',
+          sql: 'select * from `users` where `id` = ? or not `id` in (?, ?, ?)',
           bindings: [1, 1, 2, 3]
         },
         mssql: {
-          sql: 'select * from [users] where [id] = ? or [id] not in (?, ?, ?)',
+          sql: 'select * from [users] where [id] = ? or not [id] in (?, ?, ?)',
           bindings: [1, 1, 2, 3]
         },
         postgres: {
-          sql: 'select * from "users" where "id" = ? or "id" not in (?, ?, ?)',
+          sql: 'select * from "users" where "id" = ? or not "id" in (?, ?, ?)',
           bindings: [1, 1, 2, 3]
         }
       }
@@ -1182,7 +1212,7 @@ describe('QueryBuilder', function() {
     });
   });
 
-  it('unions', function() {
+  it.skip('unions', function() {
     var chain = qb()
       .select('*')
       .from('users')
@@ -1276,7 +1306,7 @@ describe('QueryBuilder', function() {
     });
   });
 
-  it('wraps unions', function() {
+  it.skip('wraps unions', function() {
     var wrappedChain = qb()
       .select('*')
       .from('users')
@@ -1388,7 +1418,7 @@ describe('QueryBuilder', function() {
   //   expect(chain.bindings).to.eql([1, 2, 10]);
   // });
 
-  it('union alls', function() {
+  it.skip('union alls', function() {
     var chain = qb()
       .select('*')
       .from('users')
@@ -1414,7 +1444,7 @@ describe('QueryBuilder', function() {
     });
   });
 
-  it('multiple unions', function() {
+  it.skip('multiple unions', function() {
     var chain = qb()
       .select('*')
       .from('users')
@@ -1450,7 +1480,7 @@ describe('QueryBuilder', function() {
     });
   });
 
-  it('multiple union alls', function() {
+  it.skip('multiple union alls', function() {
     var chain = qb()
       .select('*')
       .from('users')
@@ -1542,15 +1572,15 @@ describe('QueryBuilder', function() {
         }),
       {
         mysql: {
-          sql: 'select * from `users` where `id` not in (select `id` from `users` where `age` > ?)',
+          sql: 'select * from `users` where not `id` in (select `id` from `users` where `age` > ?)',
           bindings: [25]
         },
         mssql: {
-          sql: 'select * from [users] where [id] not in (select [id] from [users] where [age] > ?)',
+          sql: 'select * from [users] where not [id] in (select [id] from [users] where [age] > ?)',
           bindings: [25]
         },
         postgres: {
-          sql: 'select * from "users" where "id" not in (select "id" from "users" where "age" > ?)',
+          sql: 'select * from "users" where not "id" in (select "id" from "users" where "age" > ?)',
           bindings: [25]
         }
       }
@@ -1612,15 +1642,15 @@ describe('QueryBuilder', function() {
         .whereNotNull('id'),
       {
         mysql: {
-          sql: 'select * from `users` where `id` is not null',
+          sql: 'select * from `users` where not `id` is null',
           bindings: []
         },
         mssql: {
-          sql: 'select * from [users] where [id] is not null',
+          sql: 'select * from [users] where not [id] is null',
           bindings: []
         },
         postgres: {
-          sql: 'select * from "users" where "id" is not null',
+          sql: 'select * from "users" where not "id" is null',
           bindings: []
         }
       }
@@ -1636,15 +1666,15 @@ describe('QueryBuilder', function() {
         .orWhereNotNull('id'),
       {
         mysql: {
-          sql: 'select * from `users` where `id` > ? or `id` is not null',
+          sql: 'select * from `users` where `id` > ? or not `id` is null',
           bindings: [1]
         },
         mssql: {
-          sql: 'select * from [users] where [id] > ? or [id] is not null',
+          sql: 'select * from [users] where [id] > ? or not [id] is null',
           bindings: [1]
         },
         postgres: {
-          sql: 'select * from "users" where "id" > ? or "id" is not null',
+          sql: 'select * from "users" where "id" > ? or not "id" is null',
           bindings: [1]
         }
       }
@@ -2013,11 +2043,11 @@ describe('QueryBuilder', function() {
         .from('users')
         .havingNotNull('baz'),
       {
-        mysql: 'select * from `users` having `baz` is not null',
-        mssql: 'select * from [users] having [baz] is not null',
-        postgres: 'select * from "users" having "baz" is not null',
-        oracledb: 'select * from "users" having "baz" is not null',
-        oracle: 'select * from "users" having "baz" is not null'
+        mysql: 'select * from `users` having not `baz` is null',
+        mssql: 'select * from [users] having not [baz] is null',
+        postgres: 'select * from "users" having not "baz" is null',
+        oracledb: 'select * from "users" having not "baz" is null',
+        oracle: 'select * from "users" having not "baz" is null'
       }
     );
   });
@@ -2030,11 +2060,11 @@ describe('QueryBuilder', function() {
         .havingNotNull('baz')
         .orHavingNotNull('foo'),
       {
-        mysql: 'select * from `users` having `baz` is not null or `foo` is not null',
-        mssql: 'select * from [users] having [baz] is not null or [foo] is not null',
-        postgres: 'select * from "users" having "baz" is not null or "foo" is not null',
-        oracledb: 'select * from "users" having "baz" is not null or "foo" is not null',
-        oracle: 'select * from "users" having "baz" is not null or "foo" is not null'
+        mysql: 'select * from `users` having not `baz` is null or not `foo` is null',
+        mssql: 'select * from [users] having not [baz] is null or not [foo] is null',
+        postgres: 'select * from "users" having not "baz" is null or not "foo" is null',
+        oracledb: 'select * from "users" having not "baz" is null or not "foo" is null',
+        oracle: 'select * from "users" having not "baz" is null or not "foo" is null'
       }
     );
   });
@@ -2167,11 +2197,11 @@ describe('QueryBuilder', function() {
         .from('users')
         .havingNotBetween('baz', [5, 10]),
       {
-        mysql: 'select * from `users` having `baz` not between ? and ?',
-        mssql: 'select * from [users] having [baz] not between ? and ?',
-        postgres: 'select * from "users" having "baz" not between ? and ?',
-        oracledb: 'select * from "users" having "baz" not between ? and ?',
-        oracle: 'select * from "users" having "baz" not between ? and ?'
+        mysql: 'select * from `users` having not `baz` between ? and ?',
+        mssql: 'select * from [users] having not [baz] between ? and ?',
+        postgres: 'select * from "users" having not "baz" between ? and ?',
+        oracledb: 'select * from "users" having not "baz" between ? and ?',
+        oracle: 'select * from "users" having not "baz" between ? and ?'
       }
     );
   });
@@ -2185,15 +2215,15 @@ describe('QueryBuilder', function() {
         .orHavingNotBetween('baz', [20, 30]),
       {
         mysql:
-          'select * from `users` having `baz` not between ? and ? or `baz` not between ? and ?',
+          'select * from `users` having not `baz` between ? and ? or not `baz` between ? and ?',
         mssql:
-          'select * from [users] having [baz] not between ? and ? or [baz] not between ? and ?',
+          'select * from [users] having not [baz] between ? and ? or not [baz] between ? and ?',
         postgres:
-          'select * from "users" having "baz" not between ? and ? or "baz" not between ? and ?',
+          'select * from "users" having not "baz" between ? and ? or not "baz" between ? and ?',
         oracledb:
-          'select * from "users" having "baz" not between ? and ? or "baz" not between ? and ?',
+          'select * from "users" having not "baz" between ? and ? or not "baz" between ? and ?',
         oracle:
-          'select * from "users" having "baz" not between ? and ? or "baz" not between ? and ?'
+          'select * from "users" having not "baz" between ? and ? or not "baz" between ? and ?'
       }
     );
   });
@@ -2238,11 +2268,11 @@ describe('QueryBuilder', function() {
         .from('users')
         .havingNotIn('baz', [5, 10, 37]),
       {
-        mysql: 'select * from `users` having `baz` not in (?, ?, ?)',
-        mssql: 'select * from [users] having [baz] not in (?, ?, ?)',
-        postgres: 'select * from "users" having "baz" not in (?, ?, ?)',
-        oracledb: 'select * from "users" having "baz" not in (?, ?, ?)',
-        oracle: 'select * from "users" having "baz" not in (?, ?, ?)'
+        mysql: 'select * from `users` having not `baz` in (?, ?, ?)',
+        mssql: 'select * from [users] having not [baz] in (?, ?, ?)',
+        postgres: 'select * from "users" having not "baz" in (?, ?, ?)',
+        oracledb: 'select * from "users" having not "baz" in (?, ?, ?)',
+        oracle: 'select * from "users" having not "baz" in (?, ?, ?)'
       }
     );
   });
@@ -2255,11 +2285,11 @@ describe('QueryBuilder', function() {
         .havingNotIn('baz', [5, 10, 37])
         .orHavingNotIn('foo', ['Batman', 'Joker']),
       {
-        mysql: 'select * from `users` having `baz` not in (?, ?, ?) or `foo` not in (?, ?)',
-        mssql: 'select * from [users] having [baz] not in (?, ?, ?) or [foo] not in (?, ?)',
-        postgres: 'select * from "users" having "baz" not in (?, ?, ?) or "foo" not in (?, ?)',
-        oracledb: 'select * from "users" having "baz" not in (?, ?, ?) or "foo" not in (?, ?)',
-        oracle: 'select * from "users" having "baz" not in (?, ?, ?) or "foo" not in (?, ?)'
+        mysql: 'select * from `users` having not `baz` in (?, ?, ?) or not `foo` in (?, ?)',
+        mssql: 'select * from [users] having not [baz] in (?, ?, ?) or not [foo] in (?, ?)',
+        postgres: 'select * from "users" having not "baz" in (?, ?, ?) or not "foo" in (?, ?)',
+        oracledb: 'select * from "users" having not "baz" in (?, ?, ?) or not "foo" in (?, ?)',
+        oracle: 'select * from "users" having not "baz" in (?, ?, ?) or not "foo" in (?, ?)'
       }
     );
   });
@@ -3137,15 +3167,15 @@ describe('QueryBuilder', function() {
         }),
       {
         mysql:
-          'select * from `users` inner join `contacts` on `users`.`id` = `contacts`.`id` and `contacts`.`address` is not null',
+          'select * from `users` inner join `contacts` on `users`.`id` = `contacts`.`id` and not `contacts`.`address` is null',
         mssql:
-          'select * from [users] inner join [contacts] on [users].[id] = [contacts].[id] and [contacts].[address] is not null',
+          'select * from [users] inner join [contacts] on [users].[id] = [contacts].[id] and not [contacts].[address] is null',
         postgres:
-          'select * from "users" inner join "contacts" on "users"."id" = "contacts"."id" and "contacts"."address" is not null',
+          'select * from "users" inner join "contacts" on "users"."id" = "contacts"."id" and not "contacts"."address" is null',
         oracledb:
-          'select * from "users" inner join "contacts" on "users"."id" = "contacts"."id" and "contacts"."address" is not null',
+          'select * from "users" inner join "contacts" on "users"."id" = "contacts"."id" and not "contacts"."address" is null',
         oracle:
-          'select * from "users" inner join "contacts" on "users"."id" = "contacts"."id" and "contacts"."address" is not null'
+          'select * from "users" inner join "contacts" on "users"."id" = "contacts"."id" and not "contacts"."address" is null'
       }
     );
   });
@@ -3163,15 +3193,15 @@ describe('QueryBuilder', function() {
         }),
       {
         mysql:
-          'select * from `users` inner join `contacts` on `users`.`id` = `contacts`.`id` and `contacts`.`address` is not null or `contacts`.`phone` is not null',
+          'select * from `users` inner join `contacts` on `users`.`id` = `contacts`.`id` and not `contacts`.`address` is null or not `contacts`.`phone` is null',
         mssql:
-          'select * from [users] inner join [contacts] on [users].[id] = [contacts].[id] and [contacts].[address] is not null or [contacts].[phone] is not null',
+          'select * from [users] inner join [contacts] on [users].[id] = [contacts].[id] and not [contacts].[address] is null or not [contacts].[phone] is null',
         postgres:
-          'select * from "users" inner join "contacts" on "users"."id" = "contacts"."id" and "contacts"."address" is not null or "contacts"."phone" is not null',
+          'select * from "users" inner join "contacts" on "users"."id" = "contacts"."id" and not "contacts"."address" is null or not "contacts"."phone" is null',
         oracledb:
-          'select * from "users" inner join "contacts" on "users"."id" = "contacts"."id" and "contacts"."address" is not null or "contacts"."phone" is not null',
+          'select * from "users" inner join "contacts" on "users"."id" = "contacts"."id" and not "contacts"."address" is null or not "contacts"."phone" is null',
         oracle:
-          'select * from "users" inner join "contacts" on "users"."id" = "contacts"."id" and "contacts"."address" is not null or "contacts"."phone" is not null'
+          'select * from "users" inner join "contacts" on "users"."id" = "contacts"."id" and not "contacts"."address" is null or not "contacts"."phone" is null'
       }
     );
   });
@@ -3345,15 +3375,15 @@ describe('QueryBuilder', function() {
         }),
       {
         mysql:
-          'select * from `users` inner join `contacts` on `users`.`id` = `contacts`.`id` and `contacts`.`id` not between ? and ?',
+          'select * from `users` inner join `contacts` on `users`.`id` = `contacts`.`id` and not `contacts`.`id` between ? and ?',
         mssql:
-          'select * from [users] inner join [contacts] on [users].[id] = [contacts].[id] and [contacts].[id] not between ? and ?',
+          'select * from [users] inner join [contacts] on [users].[id] = [contacts].[id] and not [contacts].[id] between ? and ?',
         postgres:
-          'select * from "users" inner join "contacts" on "users"."id" = "contacts"."id" and "contacts"."id" not between ? and ?',
+          'select * from "users" inner join "contacts" on "users"."id" = "contacts"."id" and not "contacts"."id" between ? and ?',
         oracledb:
-          'select * from "users" inner join "contacts" on "users"."id" = "contacts"."id" and "contacts"."id" not between ? and ?',
+          'select * from "users" inner join "contacts" on "users"."id" = "contacts"."id" and not "contacts"."id" between ? and ?',
         oracle:
-          'select * from "users" inner join "contacts" on "users"."id" = "contacts"."id" and "contacts"."id" not between ? and ?'
+          'select * from "users" inner join "contacts" on "users"."id" = "contacts"."id" and not "contacts"."id" between ? and ?'
       }
     );
   });
@@ -3371,15 +3401,15 @@ describe('QueryBuilder', function() {
         }),
       {
         mysql:
-          'select * from `users` inner join `contacts` on `users`.`id` = `contacts`.`id` and `contacts`.`id` not between ? and ? or `users`.`id` not between ? and ?',
+          'select * from `users` inner join `contacts` on `users`.`id` = `contacts`.`id` and not `contacts`.`id` between ? and ? or not `users`.`id` between ? and ?',
         mssql:
-          'select * from [users] inner join [contacts] on [users].[id] = [contacts].[id] and [contacts].[id] not between ? and ? or [users].[id] not between ? and ?',
+          'select * from [users] inner join [contacts] on [users].[id] = [contacts].[id] and not [contacts].[id] between ? and ? or not [users].[id] between ? and ?',
         postgres:
-          'select * from "users" inner join "contacts" on "users"."id" = "contacts"."id" and "contacts"."id" not between ? and ? or "users"."id" not between ? and ?',
+          'select * from "users" inner join "contacts" on "users"."id" = "contacts"."id" and not "contacts"."id" between ? and ? or not "users"."id" between ? and ?',
         oracledb:
-          'select * from "users" inner join "contacts" on "users"."id" = "contacts"."id" and "contacts"."id" not between ? and ? or "users"."id" not between ? and ?',
+          'select * from "users" inner join "contacts" on "users"."id" = "contacts"."id" and not "contacts"."id" between ? and ? or not "users"."id" between ? and ?',
         oracle:
-          'select * from "users" inner join "contacts" on "users"."id" = "contacts"."id" and "contacts"."id" not between ? and ? or "users"."id" not between ? and ?'
+          'select * from "users" inner join "contacts" on "users"."id" = "contacts"."id" and not "contacts"."id" between ? and ? or not "users"."id" between ? and ?'
       }
     );
   });
@@ -3443,15 +3473,15 @@ describe('QueryBuilder', function() {
         }),
       {
         mysql:
-          'select * from `users` inner join `contacts` on `users`.`id` = `contacts`.`id` and `contacts`.`id` not in (?, ?, ?, ?)',
+          'select * from `users` inner join `contacts` on `users`.`id` = `contacts`.`id` and not `contacts`.`id` in (?, ?, ?, ?)',
         mssql:
-          'select * from [users] inner join [contacts] on [users].[id] = [contacts].[id] and [contacts].[id] not in (?, ?, ?, ?)',
+          'select * from [users] inner join [contacts] on [users].[id] = [contacts].[id] and not [contacts].[id] in (?, ?, ?, ?)',
         postgres:
-          'select * from "users" inner join "contacts" on "users"."id" = "contacts"."id" and "contacts"."id" not in (?, ?, ?, ?)',
+          'select * from "users" inner join "contacts" on "users"."id" = "contacts"."id" and not "contacts"."id" in (?, ?, ?, ?)',
         oracledb:
-          'select * from "users" inner join "contacts" on "users"."id" = "contacts"."id" and "contacts"."id" not in (?, ?, ?, ?)',
+          'select * from "users" inner join "contacts" on "users"."id" = "contacts"."id" and not "contacts"."id" in (?, ?, ?, ?)',
         oracle:
-          'select * from "users" inner join "contacts" on "users"."id" = "contacts"."id" and "contacts"."id" not in (?, ?, ?, ?)'
+          'select * from "users" inner join "contacts" on "users"."id" = "contacts"."id" and not "contacts"."id" in (?, ?, ?, ?)'
       }
     );
   });
@@ -3469,15 +3499,15 @@ describe('QueryBuilder', function() {
         }),
       {
         mysql:
-          'select * from `users` inner join `contacts` on `users`.`id` = `contacts`.`id` and `contacts`.`id` not in (?, ?, ?, ?) or `users`.`id` not in (?, ?)',
+          'select * from `users` inner join `contacts` on `users`.`id` = `contacts`.`id` and not `contacts`.`id` in (?, ?, ?, ?) or not `users`.`id` in (?, ?)',
         mssql:
-          'select * from [users] inner join [contacts] on [users].[id] = [contacts].[id] and [contacts].[id] not in (?, ?, ?, ?) or [users].[id] not in (?, ?)',
+          'select * from [users] inner join [contacts] on [users].[id] = [contacts].[id] and not [contacts].[id] in (?, ?, ?, ?) or not [users].[id] in (?, ?)',
         postgres:
-          'select * from "users" inner join "contacts" on "users"."id" = "contacts"."id" and "contacts"."id" not in (?, ?, ?, ?) or "users"."id" not in (?, ?)',
+          'select * from "users" inner join "contacts" on "users"."id" = "contacts"."id" and not "contacts"."id" in (?, ?, ?, ?) or not "users"."id" in (?, ?)',
         oracledb:
-          'select * from "users" inner join "contacts" on "users"."id" = "contacts"."id" and "contacts"."id" not in (?, ?, ?, ?) or "users"."id" not in (?, ?)',
+          'select * from "users" inner join "contacts" on "users"."id" = "contacts"."id" and not "contacts"."id" in (?, ?, ?, ?) or not "users"."id" in (?, ?)',
         oracle:
-          'select * from "users" inner join "contacts" on "users"."id" = "contacts"."id" and "contacts"."id" not in (?, ?, ?, ?) or "users"."id" not in (?, ?)'
+          'select * from "users" inner join "contacts" on "users"."id" = "contacts"."id" and not "contacts"."id" in (?, ?, ?, ?) or not "users"."id" in (?, ?)'
       }
     );
   });
@@ -4011,7 +4041,8 @@ describe('QueryBuilder', function() {
     testsql(
       qb()
         .from('users')
-        .insert([{ email: 'foo', name: 'taylor' }, { email: 'bar', name: 'dayle' }], 'id'),
+        .insert([{ email: 'foo', name: 'taylor' }, { email: 'bar', name: 'dayle' }])
+        .returning('id'),
       {
         mysql: {
           sql: 'insert into `users` (`email`, `name`) values (?, ?), (?, ?)',
