@@ -219,17 +219,15 @@ describe('AST', () => {
               operator: 'between'
             },
             rhs: {
-              type: 'ListNode',
-              items: [
-                {
-                  type: 'ValueNode',
-                  value: 10
-                },
-                {
-                  type: 'ValueNode',
-                  value: 20
-                }
-              ]
+              type: 'ValueRangeNode',
+              min: {
+                type: 'ValueNode',
+                value: 10
+              },
+              max: {
+                type: 'ValueNode',
+                value: 20
+              }
             }
           }
         ],
@@ -256,28 +254,26 @@ describe('AST', () => {
               operator: 'between'
             },
             rhs: {
-              type: 'ListNode',
-              items: [
-                {
-                  type: 'ValueNode',
-                  value: 10
-                },
-                {
-                  type: 'RawNode',
-                  sql: '?',
-                  bindings: [
-                    {
-                      type: 'BindingNode',
-                      match: '?',
-                      index: 0,
-                      node: {
-                        type: 'ValueNode',
-                        value: 20
-                      }
+              type: 'ValueRangeNode',
+              min: {
+                type: 'ValueNode',
+                value: 10
+              },
+              max: {
+                type: 'RawNode',
+                sql: '?',
+                bindings: [
+                  {
+                    type: 'BindingNode',
+                    match: '?',
+                    index: 0,
+                    node: {
+                      type: 'ValueNode',
+                      value: 20
                     }
-                  ]
-                }
-              ]
+                  }
+                ]
+              }
             }
           }
         ],
@@ -357,7 +353,7 @@ describe('AST', () => {
               select: [
                 {
                   type: 'SelectNode',
-                  identifier: {
+                  node: {
                     type: 'IdentifierNode',
                     ids: ['*']
                   },
@@ -367,7 +363,7 @@ describe('AST', () => {
               from: [
                 {
                   type: 'FromNode',
-                  identifier: {
+                  node: {
                     type: 'IdentifierNode',
                     ids: ['foo']
                   },
@@ -535,7 +531,7 @@ describe('AST', () => {
               operator: 'in'
             },
             rhs: {
-              type: 'ListNode',
+              type: 'ValueListNode',
               items: [
                 {
                   type: 'ValueNode',
@@ -565,7 +561,7 @@ describe('AST', () => {
               operator: 'in'
             },
             rhs: {
-              type: 'ListNode',
+              type: 'ValueListNode',
               items: [
                 {
                   type: 'ValueNode',
@@ -595,7 +591,7 @@ describe('AST', () => {
               operator: 'in'
             },
             rhs: {
-              type: 'ListNode',
+              type: 'ValueListNode',
               items: [
                 {
                   type: 'ValueNode',
@@ -621,7 +617,7 @@ describe('AST', () => {
               operator: 'in'
             },
             rhs: {
-              type: 'ListNode',
+              type: 'ValueListNode',
               items: [
                 {
                   type: 'ValueNode',
@@ -651,7 +647,7 @@ describe('AST', () => {
               select: [
                 {
                   type: 'SelectNode',
-                  identifier: {
+                  node: {
                     type: 'IdentifierNode',
                     ids: ['*']
                   },
@@ -661,7 +657,7 @@ describe('AST', () => {
               from: [
                 {
                   type: 'FromNode',
-                  identifier: {
+                  node: {
                     type: 'IdentifierNode',
                     ids: ['foo']
                   },
@@ -685,17 +681,15 @@ describe('AST', () => {
               operator: 'between'
             },
             rhs: {
-              type: 'ListNode',
-              items: [
-                {
-                  type: 'ValueNode',
-                  value: 100
-                },
-                {
-                  type: 'ValueNode',
-                  value: 200
-                }
-              ]
+              type: 'ValueRangeNode',
+              min: {
+                type: 'ValueNode',
+                value: 100
+              },
+              max: {
+                type: 'ValueNode',
+                value: 200
+              }
             },
             bool: 'and',
             not: false
@@ -711,17 +705,15 @@ describe('AST', () => {
               operator: 'between'
             },
             rhs: {
-              type: 'ListNode',
-              items: [
-                {
-                  type: 'ValueNode',
-                  value: 'a'
-                },
-                {
-                  type: 'ValueNode',
-                  value: 'b'
-                }
-              ]
+              type: 'ValueRangeNode',
+              min: {
+                type: 'ValueNode',
+                value: 'a'
+              },
+              max: {
+                type: 'ValueNode',
+                value: 'b'
+              }
             },
             bool: 'and',
             not: false
@@ -737,17 +729,15 @@ describe('AST', () => {
               operator: 'between'
             },
             rhs: {
-              type: 'ListNode',
-              items: [
-                {
-                  type: 'ValueNode',
-                  value: 'x'
-                },
-                {
-                  type: 'ValueNode',
-                  value: 'y'
-                }
-              ]
+              type: 'ValueRangeNode',
+              min: {
+                type: 'ValueNode',
+                value: 'x'
+              },
+              max: {
+                type: 'ValueNode',
+                value: 'y'
+              }
             },
             bool: 'or',
             not: false
@@ -763,17 +753,15 @@ describe('AST', () => {
               operator: 'between'
             },
             rhs: {
-              type: 'ListNode',
-              items: [
-                {
-                  type: 'ValueNode',
-                  value: 1
-                },
-                {
-                  type: 'ValueNode',
-                  value: 2
-                }
-              ]
+              type: 'ValueRangeNode',
+              min: {
+                type: 'ValueNode',
+                value: 1
+              },
+              max: {
+                type: 'ValueNode',
+                value: 2
+              }
             },
             bool: 'and',
             not: true
@@ -789,17 +777,15 @@ describe('AST', () => {
               operator: 'between'
             },
             rhs: {
-              type: 'ListNode',
-              items: [
-                {
-                  type: 'ValueNode',
-                  value: 2
-                },
-                {
-                  type: 'ValueNode',
-                  value: 3
-                }
-              ]
+              type: 'ValueRangeNode',
+              min: {
+                type: 'ValueNode',
+                value: 2
+              },
+              max: {
+                type: 'ValueNode',
+                value: 3
+              }
             },
             bool: 'and',
             not: true
@@ -815,17 +801,15 @@ describe('AST', () => {
               operator: 'between'
             },
             rhs: {
-              type: 'ListNode',
-              items: [
-                {
-                  type: 'ValueNode',
-                  value: 3
-                },
-                {
-                  type: 'ValueNode',
-                  value: 4
-                }
-              ]
+              type: 'ValueRangeNode',
+              min: {
+                type: 'ValueNode',
+                value: 3
+              },
+              max: {
+                type: 'ValueNode',
+                value: 4
+              }
             },
             bool: 'or',
             not: true
@@ -842,7 +826,7 @@ describe('AST', () => {
               select: [
                 {
                   type: 'SelectNode',
-                  identifier: {
+                  node: {
                     type: 'IdentifierNode',
                     ids: ['*']
                   },
@@ -852,7 +836,7 @@ describe('AST', () => {
               from: [
                 {
                   type: 'FromNode',
-                  identifier: {
+                  node: {
                     type: 'IdentifierNode',
                     ids: ['foo']
                   },
@@ -877,7 +861,7 @@ describe('AST', () => {
               select: [
                 {
                   type: 'SelectNode',
-                  identifier: {
+                  node: {
                     type: 'IdentifierNode',
                     ids: ['id']
                   },
@@ -887,7 +871,7 @@ describe('AST', () => {
               from: [
                 {
                   type: 'FromNode',
-                  identifier: {
+                  node: {
                     type: 'IdentifierNode',
                     ids: ['bar']
                   },
@@ -912,7 +896,7 @@ describe('AST', () => {
               select: [
                 {
                   type: 'SelectNode',
-                  identifier: {
+                  node: {
                     type: 'IdentifierNode',
                     ids: ['id']
                   },
@@ -922,7 +906,7 @@ describe('AST', () => {
               from: [
                 {
                   type: 'FromNode',
-                  identifier: {
+                  node: {
                     type: 'IdentifierNode',
                     ids: ['bar']
                   },
@@ -947,7 +931,7 @@ describe('AST', () => {
               select: [
                 {
                   type: 'SelectNode',
-                  identifier: {
+                  node: {
                     type: 'IdentifierNode',
                     ids: ['id']
                   },
@@ -957,7 +941,7 @@ describe('AST', () => {
               from: [
                 {
                   type: 'FromNode',
-                  identifier: {
+                  node: {
                     type: 'IdentifierNode',
                     ids: ['bar']
                   },
@@ -982,7 +966,7 @@ describe('AST', () => {
               select: [
                 {
                   type: 'SelectNode',
-                  identifier: {
+                  node: {
                     type: 'IdentifierNode',
                     ids: ['id']
                   },
@@ -992,7 +976,7 @@ describe('AST', () => {
               from: [
                 {
                   type: 'FromNode',
-                  identifier: {
+                  node: {
                     type: 'IdentifierNode',
                     ids: ['bar']
                   },

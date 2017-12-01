@@ -143,7 +143,7 @@ describe('AST', () => {
               select: [
                 {
                   type: 'SelectNode',
-                  identifier: {
+                  node: {
                     type: 'IdentifierNode',
                     ids: ['id']
                   },
@@ -153,7 +153,7 @@ describe('AST', () => {
               from: [
                 {
                   type: 'FromNode',
-                  identifier: {
+                  node: {
                     type: 'IdentifierNode',
                     ids: ['foo']
                   },
@@ -187,7 +187,7 @@ describe('AST', () => {
               select: [
                 {
                   type: 'SelectNode',
-                  identifier: {
+                  node: {
                     type: 'IdentifierNode',
                     ids: ['id']
                   },
@@ -197,7 +197,7 @@ describe('AST', () => {
               from: [
                 {
                   type: 'FromNode',
-                  identifier: {
+                  node: {
                     type: 'IdentifierNode',
                     ids: ['foo']
                   },
@@ -237,7 +237,7 @@ describe('AST', () => {
               select: [
                 {
                   type: 'SelectNode',
-                  identifier: {
+                  node: {
                     type: 'IdentifierNode',
                     ids: ['id']
                   },
@@ -247,7 +247,7 @@ describe('AST', () => {
               from: [
                 {
                   type: 'FromNode',
-                  identifier: {
+                  node: {
                     type: 'IdentifierNode',
                     ids: ['foo']
                   },
@@ -266,7 +266,7 @@ describe('AST', () => {
               select: [
                 {
                   type: 'SelectNode',
-                  identifier: {
+                  node: {
                     type: 'IdentifierNode',
                     ids: ['id2']
                   },
@@ -276,7 +276,7 @@ describe('AST', () => {
               from: [
                 {
                   type: 'FromNode',
-                  identifier: {
+                  node: {
                     type: 'IdentifierNode',
                     ids: ['bar']
                   },
