@@ -43,9 +43,10 @@ describe('integration tests', () => {
 
     return query
       .from('Model1')
-      .select('*')
-      .whereIn('id', [1, 2, 3])
-      .orderBy('id')
+      .select('Model1.*')
+      .whereIn('Model1.id', [1, 2, 3])
+      .leftJoin('Model1 as m', 'm.id', 'Model1.model1Id')
+      .orderBy('Model1.id')
       .then(rows => {
         console.log(rows);
       });
