@@ -1,6 +1,5 @@
 const { expect } = require('chai');
-const { QueryBuilder } = require('../../');
-const { PoolingConnectionSource } = require('../../');
+const { QueryBuilder, PoolingConnectionSource } = require('../../');
 
 const pg = require('pg');
 const {
@@ -54,5 +53,9 @@ describe('integration tests', () => {
 
   after(() => {
     return connectionSource.destroy();
+  });
+
+  after(() => {
+    return driver.destroy();
   });
 });
