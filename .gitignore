@@ -10,3 +10,4 @@ examples/express-es7/build
 profiling
 npm-debug.log*
 .vscode
+lib

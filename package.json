@@ -2,16 +2,14 @@
   "name": "sustained",
   "version": "0.1.0",
   "description": "Experimental knex.js clone with emphasis on reflection and malleability",
-  "main": "index.js",
+  "main": "lib/index.js",
   "scripts": {
-    "test": "npm run eslint && mocha --slow 10 --timeout 15000 --reporter spec --recursive tests",
-    "test-travis": "npm run eslint && istanbul --config=.istanbul.yml cover _mocha -- --slow 100 --timeout 60000 --reporter spec --recursive tests && npm run test-typings",
-    "test-fast": "mocha --slow 10 --timeout 15000 --reporter spec --recursive tests --bail",
-    "test-opt": "mocha --slow 10 --timeout 15000 --reporter spec --recursive tests --bail --trace_opt --trace_deopt",
-    "test-typings": "tsc",
-    "coveralls": "cat ./testCoverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js",
-    "prettier": "prettier --write 'examples/**/*.js' 'lib/**/*.js' 'tests/**/*.js'",
-    "eslint": "eslint --format codeframe 'examples/**/*.js' 'lib/**/*.js' 'tests/**/*.js'"
+    "test": "mocha --timeout 600000 -r ts-node/register tests/**/*.test.{ts,js}",
+    "clean": "rm -rf lib",
+    "build": "npm run clean && tsc",
+    "prepare": "npm run build",
+    "eslint": "eslint --ext .ts src/",
+    "eslint:fix": "eslint --fix --ext .ts src/"
   },
   "files": [
     "README.md",
@@ -25,17 +23,32 @@
     "url": "https://github.com/koskimas"
   },
   "license": "MIT",
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged",
+      "pre-push": "tsc --noEmit && npm run eslint"
+    }
+  },
   "devDependencies": {
-    "babel-eslint": "^8.0.2",
-    "chai": "^4.1.2",
+    "@types/node": "^14.0.5",
+    "@types/chai": "^4.2.7",
+    "@types/mocha": "^5.2.7",
+    "@typescript-eslint/eslint-plugin": "^3.0.2",
+    "@typescript-eslint/parser": "^3.0.2",
     "chai-subset": "^1.6.0",
-    "eslint": "^4.14.0",
-    "eslint-plugin-prettier": "^2.3.1",
-    "mocha": "^4.0.1",
-    "pg": "^7.4.0",
-    "prettier": "^1.8.2"
+    "pg": "^8.2.1",
+    "chai": "^4.2.0",
+    "eslint": "^7.1.0",
+    "eslint-config-prettier": "^6.11.0",
+    "eslint-plugin-prettier": "^3.1.3",
+    "husky": "^4.2.5",
+    "lint-staged": "^10.2.7",
+    "mocha": "^7.2.0",
+    "prettier": "^2.0.5",
+    "ts-node": "^8.10.2",
+    "typescript": "^3.9.3"
   },
   "dependencies": {
-    "tarn": "^1.0.0"
+    "tarn": "^3.0.0"
   }
 }
