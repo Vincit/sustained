@@ -5,7 +5,7 @@ chai.use(chaiSubset);
 const { QueryBuilder } = require('../');
 
 function query() {
-  return QueryBuilder.create();
+  return new QueryBuilder();
 }
 
 function logAst(ast) {

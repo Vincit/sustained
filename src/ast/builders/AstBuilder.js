@@ -7,10 +7,6 @@ class AstBuilder {
     this.astNodeAddHooks = [];
   }
 
-  static create(...args) {
-    return new this(...args);
-  }
-
   addNodes(target, nodes) {
     const hooks = this.astNodeAddHooks;
 

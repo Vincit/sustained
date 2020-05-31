@@ -23,7 +23,7 @@ const clientsWithNullAsDefault = {
 }
 
 function qb() {
-  return QueryBuilder.create()
+  return new QueryBuilder()
 }
 
 function verifySqlResult(dialect, expectedObj, sqlObj) {}

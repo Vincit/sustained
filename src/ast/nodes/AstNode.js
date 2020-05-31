@@ -1,12 +1,8 @@
 import { isDate, isAstNode, isObject } from '../../utils/typeUtils'
 
-class AstNode {
+export class AstNode {
   constructor() {
     this.type = this.constructor.name
-  }
-
-  static create(...args) {
-    return new this(...args)
   }
 
   visit(visitor, ...args) {
@@ -14,7 +10,8 @@ class AstNode {
     let visit = undefined
 
     while (constructor && visit === undefined) {
-      visit = visitor[constructor.name]
+      const visitMethodName = 'visit' + constructor.name;
+      visit = visitor[visitMethodName]
       constructor = constructor.__proto__
     }
 
@@ -66,7 +63,7 @@ function visitArray(arr, visitor, args) {
 }
 
 function clone(node) {
-  const copy = node.constructor.create()
+  const copy = new node.constructor();
   const props = Object.keys(node)
 
   for (let i = 0, lp = props.length; i < lp; ++i) {
@@ -107,5 +104,3 @@ Object.defineProperties(AstNode.prototype, {
     value: true,
   },
 })
-
-export { AstNode }

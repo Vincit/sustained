@@ -48,10 +48,6 @@ export class QueryCompiler {
     return CompiledQuery
   }
 
-  static create(...args) {
-    return new this(...args)
-  }
-
   compile(ast) {
     this.bindings = []
     this.parents = this.createParentMap(ast)
@@ -60,7 +56,7 @@ export class QueryCompiler {
     return new this.constructor.CompiledQuery(sql, this.bindings)
   }
 
-  QueryNode(node) {
+  visitQueryNode(node) {
     const parent = this.parents.get(node)
     // knex quirk: don't wrap subquery to parens in a raw binding node.
     const wrapToParens = (!!parent && parent.type !== 'BindingNode') || !!node.alias
@@ -188,7 +184,7 @@ export class QueryCompiler {
 
   // for example FromNode and SelectNode inherit AliasableNode and
   // are compiled by this function.
-  AliasableNode(node, opts) {
+  visitAliasableNode(node, opts) {
     let sql = ''
 
     sql += node.node.visit(this, opts)
@@ -200,7 +196,7 @@ export class QueryCompiler {
     return sql
   }
 
-  WithNode(node) {
+  visitWithNode(node) {
     let sql = ''
 
     sql += node.alias.visit(this)
@@ -218,7 +214,7 @@ export class QueryCompiler {
     return sql
   }
 
-  InsertNode(node) {
+  visitInsertNode(node) {
     let sql = ''
 
     if (node.rows.length === 1 && node.rows[0].type !== 'ObjectNode') {
@@ -264,7 +260,7 @@ export class QueryCompiler {
     return sql
   }
 
-  UpdateNode(node) {
+  visitUpdateNode(node) {
     let sql = ''
 
     sql += 'set '
@@ -275,7 +271,7 @@ export class QueryCompiler {
     return sql
   }
 
-  JoinNode(node) {
+  visitJoinNode(node) {
     let sql = ''
 
     sql += node.joinType + ' join '
@@ -294,9 +290,8 @@ export class QueryCompiler {
     return sql
   }
 
-  FilterNode(node, { idx }) {
+  visitFilterNode(node, { idx }) {
     let sql = ''
-    let op = node.op && node.op.operator
 
     if (idx !== 0) {
       sql += node.bool
@@ -329,7 +324,7 @@ export class QueryCompiler {
     return sql
   }
 
-  ValueListNode(node) {
+  visitValueListNode(node) {
     let sql = ''
 
     sql += '(' + node.items.map((it, idx) => it.visit(this, { idx })).join(', ') + ')'
@@ -337,7 +332,7 @@ export class QueryCompiler {
     return sql
   }
 
-  ValueRangeNode(node) {
+  visitValueRangeNode(node) {
     let sql = ''
 
     sql += node.min.visit(this)
@@ -347,7 +342,7 @@ export class QueryCompiler {
     return sql
   }
 
-  FilterGroupNode(node, { idx }) {
+  visitFilterGroupNode(node, { idx }) {
     let sql = ''
 
     if (idx !== 0) {
@@ -365,7 +360,7 @@ export class QueryCompiler {
     return sql
   }
 
-  OrderByNode(node) {
+  visitOrderByNode(node) {
     let sql = ''
 
     sql += node.orderBy.visit(this)
@@ -377,7 +372,7 @@ export class QueryCompiler {
     return sql
   }
 
-  GroupByNode(node) {
+  visitGroupByNode(node) {
     let sql = ''
 
     sql += node.groupBy.visit(this)
@@ -385,7 +380,7 @@ export class QueryCompiler {
     return sql
   }
 
-  ValueNode(node) {
+  visitValueNode(node) {
     if (node.value === null) {
       return 'null'
     } else {
@@ -393,11 +388,11 @@ export class QueryCompiler {
     }
   }
 
-  OperatorNode(node) {
+  visitOperatorNode(node) {
     return node.operator
   }
 
-  IdentifierNode(node, opts) {
+  visitIdentifierNode(node, opts) {
     const wrappedIds = node.ids.map((it) => this.doWrapIdentifier(it))
 
     // Add schema if specified.
@@ -412,7 +407,7 @@ export class QueryCompiler {
     return wrappedIds.join('.')
   }
 
-  RawNode(node) {
+  visitRawNode(node) {
     let sql = ''
     let prevEnd = 0
 
@@ -432,7 +427,7 @@ export class QueryCompiler {
     return sql
   }
 
-  FunctionNode(node) {
+  visitFunctionNode(node) {
     let sql = ''
 
     sql += node.name
@@ -456,7 +451,7 @@ export class QueryCompiler {
     return sql
   }
 
-  ListNode(node) {
+  visitListNode(node) {
     return node.items.map((it, idx) => it.visit(this, { idx })).join(', ')
   }
 
@@ -508,7 +503,7 @@ export class QueryCompiler {
 
     ast.visit(
       {
-        AstNode(node, parent) {
+        visitAstNode(node, parent) {
           if (parent) {
             parents.set(node, parent)
           }

@@ -53,7 +53,7 @@ function parseCallback(arg, opts) {
 
   subBuilder = arg.call(subBuilder, subBuilder) || subBuilder
   subBuilder.ast.visitAllChildren({
-    FilterNode(node) {
+    visitFilterNode(node) {
       nodes.push(node)
     },
   })
