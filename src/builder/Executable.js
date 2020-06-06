@@ -1,9 +1,9 @@
 import { asyncTry } from '../utils/promiseUtils'
 
-// Makes a given AstBuilder subclass executable by adding
+// Makes a given OperationBuilder subclass executable by adding
 // methods to compile SQL and execute the query.
-export const Executable = (AnyAstBuilder) => {
-  return class extends AnyAstBuilder {
+export const Executable = (AnyOperationBuilder) => {
+  return class extends AnyOperationBuilder {
     constructor(args = {}) {
       super(args)
 
@@ -13,7 +13,7 @@ export const Executable = (AnyAstBuilder) => {
 
     toSQL({ compiler } = {}) {
       compiler = compiler || this.compiler
-      return compiler.compile(this.ast)
+      return compiler.compile(this.operationNode)
     }
 
     execute({ compiler, connectionSource } = {}) {

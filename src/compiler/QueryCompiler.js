@@ -48,11 +48,11 @@ export class QueryCompiler {
     return CompiledQuery
   }
 
-  compile(ast) {
+  compile(operationNode) {
     this.bindings = []
-    this.parents = this.createParentMap(ast)
+    this.parents = this.createParentMap(operationNode)
 
-    const sql = ast.visit(this)
+    const sql = operationNode.visit(this)
     return new this.constructor.CompiledQuery(sql, this.bindings)
   }
 
@@ -498,12 +498,12 @@ export class QueryCompiler {
     }
   }
 
-  createParentMap(ast) {
+  createParentMap(operationNode) {
     const parents = new Map()
 
-    ast.visit(
+    operationNode.visit(
       {
-        visitAstNode(node, parent) {
+        visitOperationNode(node, parent) {
           if (parent) {
             parents.set(node, parent)
           }

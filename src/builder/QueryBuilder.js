@@ -1,4 +1,4 @@
-import { QueryAstBuilder } from '../ast/builders/QueryAstBuilder'
+import { QueryOperationBuilder } from '../operations/builders/QueryOperationBuilder'
 import { Executable } from './Executable'
 
-export class QueryBuilder extends Executable(QueryAstBuilder) {}
+export class QueryBuilder extends Executable(QueryOperationBuilder) {}

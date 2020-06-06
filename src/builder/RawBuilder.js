@@ -1,7 +1,7 @@
-import { RawAstBuilder } from '../ast/builders/RawAstBuilder'
+import { RawOperationBuilder } from '../operations/builders/RawOperationBuilder'
 import { Executable } from './Executable'
 
-export class RawBuilder extends Executable(RawAstBuilder) {}
+export class RawBuilder extends Executable(RawOperationBuilder) {}
 
 export function raw(sql, ...bindings) {
   return new RawBuilder({
